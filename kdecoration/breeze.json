@@ -1,6 +1,6 @@
 {
     "KPlugin": {
-        "Description": "Customizable window decorations using the Silver, Breeze or Redmond visual styles for the Plasma Desktop",
+        "Description": "Customizable Silver window decorations for the SonicDE desktop",
         "EnabledByDefault": true,
         "Name": "Silver"
     },

@@ -1,5 +1,5 @@
 [kcminputrc][Mouse]
-cursorTheme=breeze_cursors
+cursorTheme=silver_cursors_light
 
 [kdeglobals][General]
 ColorScheme=SilverLight
@@ -11,10 +11,10 @@ Theme=silver
 widgetStyle=Silver
 
 [kwinrc][DesktopSwitcher]
-LayoutName=org.kde.breeze.desktop
+LayoutName=org.kde.silver.desktop
 
 [kwinrc][WindowSwitcher]
-LayoutName=org.kde.breeze.desktop
+LayoutName=org.kde.silver.desktop
 
 [kwinrc][org.kde.kdecoration2]
 library=org.kde.silver
@@ -23,5 +23,5 @@ theme=Silver
 [plasmarc][Theme]
 name=silver-light
 
-[KSplash]
-Theme=org.kde.Breeze
+[ksplashrc][KSplash]
+Theme=org.kde.silver.desktop

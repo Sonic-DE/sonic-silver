@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(silver)
-set(PROJECT_VERSION "6.5.3")
+set(PROJECT_VERSION "6.7.3")
 set(PROJECT_VERSION_MAJOR 6)
 
 add_definitions( -DSILVER_VERSION="${PROJECT_VERSION}" -DSILVER_GIT_MASTER=0)
@@ -115,7 +115,6 @@ function(build_Qt6)
         add_subdirectory(icons)
         add_subdirectory(layout-templates)
         add_subdirectory(look-and-feel)
-        add_subdirectory(desktoptheme)
     endif()
 
     ki18n_install(po)
@@ -123,18 +122,30 @@ function(build_Qt6)
     # create a Config.cmake and a ConfigVersion.cmake file and install them
     include(ECMSetupVersion)
     ecm_setup_version(${PROJECT_VERSION} VARIABLE_PREFIX BREEZE
-        PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/SilverConfigVersion.cmake"
+        PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/SonicSilverConfigVersion.cmake"
     )
-    set(CMAKECONFIG_INSTALL_DIR "${KDE_INSTALL_CMAKEPACKAGEDIR}/Silver")
+    set(SONICSILVER_CMAKECONFIG_INSTALL_DIR "${KDE_INSTALL_CMAKEPACKAGEDIR}/SonicSilver")
 
-    configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/SilverConfig.cmake.in"
-                                  "${CMAKE_CURRENT_BINARY_DIR}/SilverConfig.cmake"
+    configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/SonicSilverConfig.cmake.in"
+                                  "${CMAKE_CURRENT_BINARY_DIR}/SonicSilverConfig.cmake"
                                   PATH_VARS KDE_INSTALL_FULL_DATADIR
-                                  INSTALL_DESTINATION  ${CMAKECONFIG_INSTALL_DIR}
+                                  INSTALL_DESTINATION ${SONICSILVER_CMAKECONFIG_INSTALL_DIR}
     )
-    install(FILES  "${CMAKE_CURRENT_BINARY_DIR}/SilverConfig.cmake"
-                   "${CMAKE_CURRENT_BINARY_DIR}/SilverConfigVersion.cmake"
-            DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/SonicSilverConfig.cmake"
+                  "${CMAKE_CURRENT_BINARY_DIR}/SonicSilverConfigVersion.cmake"
+            DESTINATION "${SONICSILVER_CMAKECONFIG_INSTALL_DIR}"
+            COMPONENT Devel
+    )
+
+    set(BREEZE_CMAKECONFIG_INSTALL_DIR "${KDE_INSTALL_CMAKEPACKAGEDIR}/Breeze")
+    configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/BreezeConfig.cmake.in"
+                                  "${CMAKE_CURRENT_BINARY_DIR}/BreezeConfig.cmake"
+                                  PATH_VARS KDE_INSTALL_FULL_DATADIR
+                                  INSTALL_DESTINATION ${BREEZE_CMAKECONFIG_INSTALL_DIR}
+    )
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/BreezeConfig.cmake"
+                  "${CMAKE_CURRENT_BINARY_DIR}/SonicSilverConfigVersion.cmake"
+            DESTINATION "${BREEZE_CMAKECONFIG_INSTALL_DIR}"
             COMPONENT Devel
     )
 
@@ -144,6 +155,7 @@ build_Qt6()
 
 include(KDEInstallDirs6)
 add_subdirectory(colors)
+add_subdirectory(cursors)
 
 # add clang-format target for all our real source files
 file(GLOB_RECURSE ALL_CLANG_FORMAT_SOURCE_FILES *.cpp *.h)

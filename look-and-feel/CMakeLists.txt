@@ -6,3 +6,5 @@ install(DIRECTORY org.kde.silverlightbottompanel.desktop
         DESTINATION ${KDE_INSTALL_DATADIR}/plasma/look-and-feel)
 install(DIRECTORY org.kde.silverlightleftpanel.desktop
         DESTINATION ${KDE_INSTALL_DATADIR}/plasma/look-and-feel)
+install(DIRECTORY org.kde.silver.desktop
+        DESTINATION ${KDE_INSTALL_DATADIR}/plasma/look-and-feel)

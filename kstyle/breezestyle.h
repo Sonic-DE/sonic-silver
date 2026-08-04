@@ -13,7 +13,7 @@
 #include "breezemetrics.h"
 #include "config-breeze.h"
 
-#if BREEZE_HAVE_KSTYLE
+#if SILVER_HAVE_KSTYLE
 #include <KStyle>
 #endif
 
@@ -57,7 +57,7 @@ class BlurHelper;
 class ToolsAreaManager;
 
 //* convenience typedef for base class
-#if !BREEZE_HAVE_KSTYLE
+#if !SILVER_HAVE_KSTYLE
 using ParentStyleClass = QCommonStyle;
 #else
 using ParentStyleClass = KStyle;

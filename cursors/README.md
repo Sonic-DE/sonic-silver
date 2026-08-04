@@ -1,8 +1,8 @@
-# Breeze Cursors
+# Silver Cursors
 
 ## Editing the SVGs
 
-SVG cursors are individual ".svg" files in the "{Breeze,Breeze_Light}/src/svg" directory.
+SVG cursors are individual ".svg" files in the "{Silver_Dark,Silver_Light}/src/svg" directory.
 
 The canvas size should correspond to a nominal size (reported to apps, and shown in the
 cursor KCM) of 24.
@@ -18,10 +18,10 @@ Because building cursors requires `Inkscape`, it's not integrated into the norma
 build. After making changes to the SVGs, you should manually build the cursor theme:
 
 1. Ensure you have `Inkscape` and `xcursorgen` installed.
-2. "cd" into the "Breeze" and "Breeze_Light" directory and run "../src/build.sh" script.
+2. "cd" into the "Silver_Dark" and "Silver_Light" directory and run "../src/build.sh" script.
    The script will first use `Inkscape` to render SVGs into PNGs in the "build" directory,
-   then use `xcursorgen` to generate the X11 cursor theme in the "Breeze/Breeze" or
-   "Breeze_Light/Breeze_Light" directory.
+   then use `xcursorgen` to generate the X11 cursor theme in the "Silver_Dark/Silver_Dark" or
+   "Silver_Light/Silver_Light" directory.
 3. Commit changes in the theme directories to git.
 
 ## SVG cursor format

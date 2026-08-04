@@ -65,8 +65,8 @@ void SystemIconGeneration::load()
 void SystemIconGeneration::populateComboBoxesWithSystemIconThemes()
 {
     QStringList iconThemes = KIconTheme::list();
-    iconThemes.removeAll(QStringLiteral("silver"));
-    iconThemes.removeAll(QStringLiteral("silver-dark"));
+    iconThemes.removeAll(QStringLiteral("silver-generated"));
+    iconThemes.removeAll(QStringLiteral("silver-dark-generated"));
     iconThemes.sort(Qt::CaseSensitivity::CaseInsensitive);
 
     m_ui->silverIconThemeInherits->addItems(iconThemes);

@@ -19,7 +19,7 @@
 #include <QString>
 #include <QWidget>
 
-#if BREEZE_HAVE_QTQUICK
+#if SILVER_HAVE_QTQUICK
 #include <QQuickItem>
 #endif
 
@@ -42,7 +42,7 @@ public:
     //* register widget
     void registerWidget(QWidget *);
 
-#if BREEZE_HAVE_QTQUICK
+#if SILVER_HAVE_QTQUICK
     //* register quick item
     void registerQuickItem(QQuickItem *);
 #endif
@@ -251,7 +251,7 @@ private:
     /** Weak pointer is used in case the target gets deleted while drag is in progress */
     WeakPointer<QWidget> _target;
 
-#if BREEZE_HAVE_QTQUICK
+#if SILVER_HAVE_QTQUICK
     WeakPointer<QQuickItem> _quickTarget;
 #endif
 

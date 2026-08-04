@@ -44,7 +44,7 @@ void SystemIconGenerator::generate()
 
     QString iconsPath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) % QStringLiteral("/icons");
 
-    QString lightIconsPath = iconsPath + QStringLiteral("/silver");
+    QString lightIconsPath = iconsPath + QStringLiteral("/silver-generated");
     DecorationColors decorationColorsLight(false);
     decorationColorsLight.generateDecorationAndButtonColors(QApplication::palette(),
                                                             m_internalSettings,
@@ -55,9 +55,9 @@ void SystemIconGenerator::generate()
                                                             "",
                                                             true,
                                                             true); // titlebar colours based on Breeze Light
-    generateIconThemeDir(lightIconsPath, i18n("Silver"), m_internalSettings->silverIconThemeInherits(), decorationColorsLight);
+    generateIconThemeDir(lightIconsPath, i18n("Silver Generated"), m_internalSettings->silverIconThemeInherits(), decorationColorsLight);
 
-    QString darkIconsPath = iconsPath + QStringLiteral("/silver-dark");
+    QString darkIconsPath = iconsPath + QStringLiteral("/silver-dark-generated");
     DecorationColors decorationColorsDark(false);
     decorationColorsDark.generateDecorationAndButtonColors(QApplication::palette(),
                                                            m_internalSettings,
@@ -68,7 +68,7 @@ void SystemIconGenerator::generate()
                                                            "",
                                                            true,
                                                            true); // titlebar colours based on Breeze Dark
-    generateIconThemeDir(darkIconsPath, i18n("Silver Dark"), m_internalSettings->silverDarkIconThemeInherits(), decorationColorsDark);
+    generateIconThemeDir(darkIconsPath, i18n("Silver Dark Generated"), m_internalSettings->silverDarkIconThemeInherits(), decorationColorsDark);
 }
 
 void SystemIconGenerator::generateIconThemeDir(const QString themeDirPath,

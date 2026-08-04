@@ -10,7 +10,7 @@
 
 #include "breezemetrics.h"
 
-#if BREEZE_HAVE_QTQUICK
+#if SILVER_HAVE_QTQUICK
 #include <QQuickItem>
 #endif
 
@@ -41,7 +41,7 @@ bool BusyIndicatorEngine::registerWidget(QObject *object)
         // connect destruction signal
         connect(object, &QObject::destroyed, this, &BusyIndicatorEngine::unregisterWidget, Qt::UniqueConnection);
 
-#if BREEZE_HAVE_QTQUICK
+#if SILVER_HAVE_QTQUICK
         if (QQuickItem *item = qobject_cast<QQuickItem *>(object)) {
             connect(item, &QQuickItem::visibleChanged, this, [this, item, object]() {
                 if (!item->isVisible()) {
@@ -130,7 +130,7 @@ void BusyIndicatorEngine::setValue(int value)
 
             const void *key = iter.key();
             QObject *obj = const_cast<QObject *>(static_cast<const QObject *>(key));
-#if BREEZE_HAVE_QTQUICK
+#if SILVER_HAVE_QTQUICK
             if (QQuickItem *item = qobject_cast<QQuickItem *>(obj)) {
                 item->polish();
             } else

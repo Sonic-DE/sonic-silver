@@ -87,8 +87,8 @@ function(build_Qt6)
         find_package(KF6KirigamiPlatform ${KF6_MIN_VERSION} REQUIRED)
     endif()
 
-    set(BREEZE_HAVE_KSTYLE ${KF6FrameworkIntegration_FOUND})
-    set(BREEZE_HAVE_QTQUICK ${Qt6Quick_FOUND})
+    set(SILVER_HAVE_KSTYLE ${KF6FrameworkIntegration_FOUND})
+    set(SILVER_HAVE_QTQUICK ${Qt6Quick_FOUND})
 
     # https://bugreports.qt.io/browse/QTBUG-114706
     add_library(Qt::Core ALIAS Qt6::Core)

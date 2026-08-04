@@ -164,11 +164,11 @@
     <group name="SystemIconGeneration">
 
         <entry name="SilverIconThemeInherits" type="String">
-            <default>breeze</default>
+            <default>silver</default>
         </entry>
 
         <entry name="SilverDarkIconThemeInherits" type="String">
-            <default>breeze-dark</default>
+            <default>silver-dark</default>
         </entry>
 
     </group>

@@ -9,7 +9,7 @@
 
 #include "breezeanimation.h"
 
-#if BREEZE_HAVE_QTQUICK
+#if SILVER_HAVE_QTQUICK
 #include <QQuickItem>
 #endif
 
@@ -85,8 +85,8 @@ protected:
         if (auto widget = qobject_cast<QWidget *>(_target)) {
             widget->update();
         }
-#if BREEZE_HAVE_QTQUICK
-        else if (auto item = qobject_cast<QQuickItem *>(_target)) {
+#if SILVER_HAVE_QTQUICK
+        else if (auto item = qobject_cast<QQuickItem*>(_target)) {
             // Note: Calling polish() instead of update() because that's where
             // Breeze would repaint its image for texture.
             item->polish();

@@ -84,7 +84,7 @@ if(HAVE_QTDBUS)
     )
 endif()
 
-if( BREEZE_HAVE_QTQUICK )
+if( SILVER_HAVE_QTQUICK )
     target_link_libraries(silver${QT_MAJOR_VERSION}
         Qt${QT_MAJOR_VERSION}::Quick
         KF${QT_MAJOR_VERSION}::CoreAddons
@@ -101,7 +101,7 @@ target_link_libraries(silver${QT_MAJOR_VERSION}
 )
 
 target_link_libraries(silver6 KF6::ColorScheme)
-if (BREEZE_HAVE_QTQUICK)
+if (SILVER_HAVE_QTQUICK)
     target_link_libraries(silver6 KF6::KirigamiPlatform)
 endif()
 

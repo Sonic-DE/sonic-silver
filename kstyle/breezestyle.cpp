@@ -68,7 +68,7 @@
 #include <QDBusConnection>
 #endif
 
-#if BREEZE_HAVE_QTQUICK
+#if SILVER_HAVE_QTQUICK
 #include <KCoreAddons>
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #include <Kirigami/Platform/TabletModeWatcher>
@@ -283,7 +283,7 @@ Style::Style()
     , _toolsAreaManager(std::make_unique<ToolsAreaManager>(_helper))
     , _widgetExplorer(std::make_unique<WidgetExplorer>())
     , _tabBarData(std::make_unique<BreezePrivate::TabBarData>())
-#if BREEZE_HAVE_KSTYLE
+#if SILVER_HAVE_KSTYLE
     , SH_ArgbDndWindow(newStyleHint(QStringLiteral("SH_ArgbDndWindow")))
     , CE_CapacityBar(newControlElement(QStringLiteral("CE_CapacityBar")))
     , CE_IconButton(newControlElement(QStringLiteral("CE_IconButton")))
@@ -1337,7 +1337,7 @@ void Style::drawControl(ControlElement element, const QStyleOption *option, QPai
 {
     StyleControl fcn;
 
-#if BREEZE_HAVE_KSTYLE
+#if SILVER_HAVE_KSTYLE
     if (element == CE_CapacityBar) {
         fcn = &Style::drawProgressBarControl;
     } else if (element == CE_IconButton) {
@@ -8705,7 +8705,7 @@ bool Style::isTabletMode() const
     if (qEnvironmentVariableIsSet("BREEZE_IS_TABLET_MODE")) {
         return qEnvironmentVariableIntValue("BREEZE_IS_TABLET_MODE");
     }
-#if BREEZE_HAVE_QTQUICK
+#if SILVER_HAVE_QTQUICK
     return TabletModeWatcher::self()->isTabletMode();
 #else
     return false;
@@ -8888,7 +8888,7 @@ void Style::generateDecorationColorsOnDecorationColorSettingsUpdate(QByteArray u
 //____________________________________________________________________
 bool Style::isQtQuickControl(const QStyleOption *option, const QWidget *widget) const
 {
-#if BREEZE_HAVE_QTQUICK
+#if SILVER_HAVE_QTQUICK
     if (!widget && option) {
         if (const auto item = qobject_cast<QQuickItem *>(option->styleObject)) {
             _windowManager->registerQuickItem(item);

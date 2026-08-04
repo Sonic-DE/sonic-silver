@@ -41,7 +41,7 @@
 // needed to deal with device pixel ratio
 #include <QWindow>
 
-#if BREEZE_HAVE_QTQUICK
+#if SILVER_HAVE_QTQUICK
 // needed to enable dragging from QQuickWindows
 #include <QQuickRenderControl>
 #include <QQuickWindow>
@@ -163,7 +163,7 @@ void WindowManager::registerWidget(QWidget *widget)
     }
 }
 
-#if BREEZE_HAVE_QTQUICK
+#if SILVER_HAVE_QTQUICK
 //_____________________________________________________________
 void WindowManager::registerQuickItem(QQuickItem *item)
 {
@@ -233,7 +233,7 @@ bool WindowManager::eventFilter(QObject *object, QEvent *event)
 
     case QEvent::MouseMove:
         if (object == _target.data()
-#if BREEZE_HAVE_QTQUICK
+#if SILVER_HAVE_QTQUICK
             || object == _quickTarget.data()
 #endif
         ) {
@@ -243,7 +243,7 @@ bool WindowManager::eventFilter(QObject *object, QEvent *event)
 
     case QEvent::MouseButtonRelease:
         if (_target
-#if BREEZE_HAVE_QTQUICK
+#if SILVER_HAVE_QTQUICK
             || _quickTarget
 #endif
         ) {
@@ -267,7 +267,7 @@ void WindowManager::timerEvent(QTimerEvent *event)
         if (_target) {
             startDrag(_target.data()->window()->windowHandle());
         }
-#if BREEZE_HAVE_QTQUICK
+#if SILVER_HAVE_QTQUICK
         else if (_quickTarget) {
             _quickTarget.data()->ungrabMouse();
             startDrag(_quickTarget.data()->window());
@@ -309,7 +309,7 @@ bool WindowManager::mousePressEvent(QObject *object, QEvent *event)
         setLocked(true);
     }
 
-#if BREEZE_HAVE_QTQUICK
+#if SILVER_HAVE_QTQUICK
     // check QQuickItem - we can immediately start drag, because QQuickWindow's contentItem
     // only receives mouse events that weren't handled by children
     if (auto item = qobject_cast<QQuickItem *>(object)) {
@@ -753,7 +753,7 @@ bool WindowManager::canDrag(QWidget *widget, QWidget *child, const QPoint &posit
 void WindowManager::resetDrag()
 {
     _target.clear();
-#if BREEZE_HAVE_QTQUICK
+#if SILVER_HAVE_QTQUICK
     _quickTarget.clear();
 #endif
     if (_dragTimer.isActive()) {
@@ -775,7 +775,7 @@ void WindowManager::startDrag(QWindow *window)
         return;
     }
 
-#if BREEZE_HAVE_QTQUICK
+#if SILVER_HAVE_QTQUICK
     if (_quickTarget) {
         if (QQuickWindow *qw = qobject_cast<QQuickWindow *>(window)) {
             QWindow *renderWindow = QQuickRenderControl::renderWindowFor(qw);

@@ -112,7 +112,6 @@ function(build_Qt6)
         add_definitions( -DKDECORATION_VERSION_MAJOR=${KDECORATION_VERSION_MAJOR} -DKDECORATION_VERSION_MINOR=${KDECORATION_VERSION_MINOR} -DKDECORATION_VERSION_PATCH=${KDECORATION_VERSION_PATCH})
 
         add_subdirectory(kdecoration)
-        add_subdirectory(icons)
         add_subdirectory(layout-templates)
         add_subdirectory(look-and-feel)
     endif()

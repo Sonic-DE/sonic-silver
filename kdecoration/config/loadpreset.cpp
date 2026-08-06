@@ -118,7 +118,8 @@ void LoadPreset::loadButtonClicked()
         configWidget->load();
         DBusMessages::updateDecorationColorCache();
         DBusMessages::kwinReloadConfig();
-        configWidget->generateSystemIcons();
+        DBusMessages::kstyleReloadDecorationConfig();
+        DBusMessages::kstyleReloadConfig();
     }
 }
 

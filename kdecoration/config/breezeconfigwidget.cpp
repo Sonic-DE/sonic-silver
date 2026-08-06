@@ -107,7 +107,6 @@ ConfigWidget::ConfigWidget(QObject *parent, const KPluginMetaData &data, const Q
     // add corner icon
     m_ui.cornerRadiusIcon->setPixmap(QIcon::fromTheme(QStringLiteral("tool_curve")).pixmap(16, 16));
 
-    m_systemIconGenerationDialog = new SystemIconGeneration(m_configuration, m_presetsConfiguration, this);
     m_loadPresetDialog = new LoadPreset(m_configuration, m_presetsConfiguration, this);
     m_buttonSizingDialog = new ButtonSizing(m_configuration, m_presetsConfiguration, this);
     getButtonsOrderFromKwinConfig();
@@ -118,7 +117,6 @@ ConfigWidget::ConfigWidget(QObject *parent, const KPluginMetaData &data, const Q
     m_windowOutlineStyleDialog = new WindowOutlineStyle(m_configuration, m_presetsConfiguration, this);
     m_shadowStyleDialog = new ShadowStyle(m_configuration, m_presetsConfiguration, this);
 
-    connect(m_systemIconGenerationDialog, &SystemIconGeneration::changed, this, &ConfigWidget::updateChanged, Qt::ConnectionType::DirectConnection);
     connect(m_buttonSizingDialog, &ButtonSizing::changed, this, &ConfigWidget::updateChanged, Qt::ConnectionType::DirectConnection);
     connect(m_buttonColorsDialog, &ButtonColors::changed, this, &ConfigWidget::updateChanged, Qt::ConnectionType::DirectConnection);
     connect(m_buttonBehaviourDialog, &ButtonBehaviour::changed, this, &ConfigWidget::updateChanged, Qt::ConnectionType::DirectConnection);
@@ -139,7 +137,6 @@ ConfigWidget::ConfigWidget(QObject *parent, const KPluginMetaData &data, const Q
     // set the long version string if from the git master
     m_ui.version->setText(QStringLiteral("v") + silverLongVersion());
 
-    connect(m_ui.systemIconGenerationButton, &QAbstractButton::clicked, this, &ConfigWidget::systemIconGenerationButtonClicked);
     connect(m_ui.buttonSizingButton, &QAbstractButton::clicked, this, &ConfigWidget::buttonSizingButtonClicked);
     connect(m_ui.buttonColorsButton, &QAbstractButton::clicked, this, &ConfigWidget::buttonColorsButtonClicked);
     connect(m_ui.buttonBehaviourButton, &QAbstractButton::clicked, this, &ConfigWidget::buttonBehaviourButtonClicked);
@@ -230,7 +227,6 @@ void ConfigWidget::load()
     onIconsChanged();
 
     // load dialogs
-    m_systemIconGenerationDialog->load();
     m_buttonSizingDialog->load();
     m_buttonColorsDialog->load();
     m_buttonBehaviourDialog->load();
@@ -286,7 +282,6 @@ void ConfigWidget::saveMain(QString saveAsPresetName)
     m_internalSettings->setForceColorizeSystemIcons(m_ui.forceColorizeSystemIcons->isChecked());
     m_internalSettings->setColorizeWindowOutlineWithButton(m_ui.colorizeWindowOutlineWithButton->isChecked());
 
-    m_systemIconGenerationDialog->save(false);
     m_buttonSizingDialog->save(false);
     m_buttonColorsDialog->save(false);
     m_buttonBehaviourDialog->save(false);
@@ -326,10 +321,7 @@ void ConfigWidget::saveMain(QString saveAsPresetName)
     DBusMessages::kwinReloadConfig();
 
     // not needed as both of the other DBUS messages also update KStyle
-    // DBusMessages::kstyleReloadDecorationConfig();
-
-    // auto-generate the silver and silver-dark system icons
-    generateSystemIcons();
+    DBusMessages::kstyleReloadDecorationConfig();
 }
 
 //_________________________________________________________
@@ -361,7 +353,6 @@ void ConfigWidget::defaults()
     m_ui.colorizeWindowOutlineWithButton->setChecked(m_internalSettings->colorizeWindowOutlineWithButton());
 
     // set defaults in dialogs
-    m_systemIconGenerationDialog->defaults();
     m_buttonSizingDialog->defaults();
     m_buttonColorsDialog->defaults();
     m_buttonBehaviourDialog->defaults();
@@ -398,10 +389,6 @@ bool ConfigWidget::isDefaults()
         KConfigGroup group = m_configuration->group(groupName);
         if (group.keyList().count())
             return false;
-    }
-
-    if (!m_systemIconGenerationDialog->isDefaults()) {
-        return false;
     }
 
     if (!m_buttonSizingDialog->isDefaults()) {
@@ -489,8 +476,6 @@ void ConfigWidget::updateChanged()
         modified = true;
 
     // dialogs
-    else if (m_systemIconGenerationDialog->m_changed)
-        modified = true;
     else if (m_buttonSizingDialog->m_changed)
         modified = true;
     else if (m_buttonColorsDialog->m_changed)
@@ -551,11 +536,6 @@ void ConfigWidget::dialogChanged(bool changed)
     setNeedsSave(changed);
 }
 
-void ConfigWidget::systemIconGenerationButtonClicked()
-{
-    m_systemIconGenerationDialog->show();
-}
-
 void ConfigWidget::buttonSizingButtonClicked()
 {
     m_buttonSizingDialog->setVisibleUiElements();
@@ -604,12 +584,6 @@ void ConfigWidget::presetsButtonClicked()
     m_loadPresetDialog->setWindowTitle(i18n("Presets - Silver Settings"));
     m_loadPresetDialog->initPresetsList();
     m_loadPresetDialog->show();
-}
-
-void ConfigWidget::generateSystemIcons()
-{
-    // auto-generate the silver and silver-dark system icons in a separate process
-    system("silver-settings -g &");
 }
 
 void ConfigWidget::updateIcons()

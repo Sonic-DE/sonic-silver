@@ -338,8 +338,8 @@ void ButtonSizing::save(const bool reloadKwinConfig)
 
     if (reloadKwinConfig) {
         DBusMessages::kwinReloadConfig();
-
-        static_cast<ConfigWidget *>(m_parent)->generateSystemIcons();
+        DBusMessages::kstyleReloadDecorationConfig();
+        DBusMessages::kstyleReloadConfig();
     }
 }
 

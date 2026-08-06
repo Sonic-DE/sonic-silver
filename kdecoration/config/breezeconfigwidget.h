@@ -20,7 +20,6 @@
 #include "kdecorationglobals.h"
 #include "loadpreset.h"
 #include "shadowstyle.h"
-#include "systemicongeneration.h"
 #include "titlebaropacity.h"
 #include "titlebarspacing.h"
 #include "ui_breezeconfigurationui.h"
@@ -103,16 +102,12 @@ public:
 Q_SIGNALS:
     void saved();
 
-public Q_SLOTS:
-    void generateSystemIcons();
-
 protected Q_SLOTS:
 
     //* update changed state
     virtual void updateChanged();
     void setEnabledAnimationsSpeed();
     void onIconsChanged();
-    void systemIconGenerationButtonClicked();
     void buttonSizingButtonClicked();
     void buttonColorsButtonClicked();
     void buttonBehaviourButtonClicked();
@@ -153,7 +148,6 @@ private:
     bool m_loading = false;
 
     //* dialogs behind button
-    SystemIconGeneration *m_systemIconGenerationDialog;
     ButtonSizing *m_buttonSizingDialog;
     ButtonColors *m_buttonColorsDialog;
     ButtonBehaviour *m_buttonBehaviourDialog;

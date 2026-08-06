@@ -576,9 +576,8 @@ void ButtonBehaviour::save(const bool reloadKwinConfig)
     if (reloadKwinConfig) {
         DBusMessages::updateDecorationColorCache();
         DBusMessages::kwinReloadConfig();
-        // DBusMessages::kstyleReloadDecorationConfig(); //should reload anyway
-
-        static_cast<ConfigWidget *>(m_parent)->generateSystemIcons();
+        DBusMessages::kstyleReloadDecorationConfig();
+        DBusMessages::kstyleReloadConfig();
     }
 }
 

@@ -171,8 +171,8 @@ void WindowOutlineStyle::save(const bool reloadKwinConfig)
     if (reloadKwinConfig) {
         DBusMessages::updateDecorationColorCache();
         DBusMessages::kwinReloadConfig();
-
-        static_cast<ConfigWidget *>(m_parent)->generateSystemIcons();
+        DBusMessages::kstyleReloadDecorationConfig();
+        DBusMessages::kstyleReloadConfig();
     }
 }
 

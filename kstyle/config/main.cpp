@@ -13,7 +13,6 @@
 #include "breeze.h"
 #include "dbusmessages.h"
 #include "presetsmodel.h"
-#include "systemicongenerator.h"
 #include <QAbstractScrollArea>
 #include <QApplication>
 #include <QCommandLineParser>
@@ -87,10 +86,6 @@ CommandLineProcessResult processComandLine(QApplication &app, QCommandLineParser
                                    i18n("Force the import of a preset file from a different Silver version."));
     parser.addOption(forceOption);
 
-    QCommandLineOption generateIcons(QStringList() << QStringLiteral("g") << QStringLiteral("generate-system-icons"),
-                                     i18n("Generate silver and silver-dark system icons."));
-    parser.addOption(generateIcons);
-
     parser.process(app);
 
     QString const configFile = QStringLiteral("silver/silverrc");
@@ -143,22 +138,17 @@ CommandLineProcessResult processComandLine(QApplication &app, QCommandLineParser
 
         InternalSettingsPtr internalSettings = InternalSettingsPtr(new InternalSettings());
         internalSettings->load();
-        PresetsModel::loadPresetAndSave(internalSettings.data(), config.data(), presetsConfig.data(), parser.value(loadWindecoPresetOption), true);
+        if (!PresetsModel::loadPresetAndSave(internalSettings.data(), config.data(), presetsConfig.data(), parser.value(loadWindecoPresetOption), true)) {
+            output << i18n("ERROR: Preset, \"") << parser.value(loadWindecoPresetOption) << i18n("\" could not be loaded.") << Qt::endl;
+            return {CommandLineProcessResult::Status::Error};
+        }
         DBusMessages::updateDecorationColorCache();
+        // needed to tell kwin to reload when running from external silver-settings
         DBusMessages::kwinReloadConfig();
+        DBusMessages::kstyleReloadDecorationConfig();
+        DBusMessages::kstyleReloadConfig();
 
         output << i18n("Preset, \"") << parser.value(loadWindecoPresetOption) << i18n("\" loaded...") << Qt::endl;
-    }
-
-    if (parser.isSet(generateIcons) || parser.isSet(loadWindecoPresetOption)) {
-        commandSet = true;
-        InternalSettingsPtr internalSettings = InternalSettingsPtr(new InternalSettings());
-        internalSettings->load();
-
-        // auto-generate the silver and silver-dark system icons
-        SystemIconGenerator iconGenerator(internalSettings);
-        iconGenerator.generate();
-        output << i18n("silver and silver-dark system icons generated.") << Qt::endl;
     }
 
     if (commandSet) {

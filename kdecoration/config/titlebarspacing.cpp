@@ -96,8 +96,11 @@ void TitleBarSpacing::save(const bool reloadKwinConfig)
     m_internalSettings->save();
     setChanged(false);
 
-    if (reloadKwinConfig)
+    if (reloadKwinConfig) {
         DBusMessages::kwinReloadConfig();
+        DBusMessages::kstyleReloadDecorationConfig();
+        DBusMessages::kstyleReloadConfig();
+    }
 }
 
 void TitleBarSpacing::defaults()

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(silver)
-set(PROJECT_VERSION "6.7.3")
+set(PROJECT_VERSION "6.7.4")
 set(PROJECT_VERSION_MAJOR 6)
 
 add_definitions( -DSILVER_VERSION="${PROJECT_VERSION}" -DSILVER_GIT_MASTER=0)

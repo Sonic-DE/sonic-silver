@@ -52,6 +52,7 @@ function(build_Qt6)
         set(HAVE_QTDBUS ${Qt6DBus_FOUND})
 
         option(WITH_DECORATIONS "Build Silver window decorations for KWin" ON)
+        option(WITH_WALLPAPERS "Install Silver default wallpapers" ON)
 
 
         find_package(KF6FrameworkIntegration ${KF6_MIN_VERSION} CONFIG )
@@ -69,6 +70,7 @@ function(build_Qt6)
         )
     else()
         set(WITH_DECORATIONS OFF)
+        set(WITH_WALLPAPERS OFF)
     endif()
 
     find_package(Qt6 ${QT_MIN_VERSION} REQUIRED CONFIG COMPONENTS Widgets Core Svg Xml) #Svg and Xml only needed for settings (Qt6 only)
@@ -114,6 +116,10 @@ function(build_Qt6)
         add_subdirectory(kdecoration)
         add_subdirectory(layout-templates)
         add_subdirectory(look-and-feel)
+    endif()
+
+    if(WITH_WALLPAPERS)
+        add_subdirectory(wallpapers)
     endif()
 
     ki18n_install(po)

@@ -1,0 +1,52 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "joseph.w.crowell@gmail.com",
+                "Name": "Joseph Crowell"
+            }
+        ],
+        "Id": "Silver",
+        "License": "CC-BY-SA-4.0",
+        "Name": "Silver",
+        "Name[ar]": "فضة",
+        "Name[bg]": "Сребро",
+        "Name[ca@valencia]": "Plata",
+        "Name[ca]": "Plata",
+        "Name[cs]": "Stříbro",
+        "Name[de]": "Silber",
+        "Name[el]": "Άσημο",
+        "Name[en_GB]": "Silver",
+        "Name[eo]": "Arĝento",
+        "Name[es]": "Plata",
+        "Name[eu]": "Zilarra",
+        "Name[fi]": "Hopea",
+        "Name[fr]": "Argent",
+        "Name[gl]": "Prata",
+        "Name[he]": "כסף",
+        "Name[hu]": "Ezüst",
+        "Name[ia]": "Argento",
+        "Name[is]": "Silfur",
+        "Name[it]": "Argento",
+        "Name[ka]": "ვერცხლი",
+        "Name[ko]": "은",
+        "Name[lt]": "Sidabras",
+        "Name[lv]": "Sudrabs",
+        "Name[nl]": "Zilver",
+        "Name[nn]": "Sølv",
+        "Name[pl]": "Srebro",
+        "Name[pt]": "Prata",
+        "Name[pt_BR]": "Prata",
+        "Name[ro]": "Argint",
+        "Name[ru]": "Серебро",
+        "Name[sa]": "रजत",
+        "Name[sk]": "Striebro",
+        "Name[sl]": "Srebro",
+        "Name[sq]": "Argjend",
+        "Name[sv]": "Silver",
+        "Name[tr]": "Gümüş",
+        "Name[uk]": "Срібло",
+        "Name[zh_CN]": "银",
+        "Name[zh_TW]": "銀"
+    }
+}

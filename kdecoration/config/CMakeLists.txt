@@ -58,5 +58,12 @@ target_link_libraries(kcm_silverdecoration
 
 kcmutils_generate_desktop_file(kcm_silverdecoration)
 
+#generate preset files with the current project version substituted
+file(GLOB PRESET_FILES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/presets/*.klpw")
+foreach(preset_file ${PRESET_FILES})
+    get_filename_component(preset_name "${preset_file}" NAME)
+    configure_file("${preset_file}" "${CMAKE_CURRENT_BINARY_DIR}/presets/${preset_name}" @ONLY)
+endforeach()
+
 #install bundled presets
-install(DIRECTORY presets  DESTINATION  ${KDE_INSTALL_QTPLUGINDIR}/org.kde.kdecoration3.kcm/silverdecoration)
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/presets DESTINATION ${KDE_INSTALL_QTPLUGINDIR}/org.kde.kdecoration3.kcm/silverdecoration)

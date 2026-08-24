@@ -1,5 +1,5 @@
 [Silver Window Decoration Preset File]
-version=6.7.3
+version=@PROJECT_VERSION@
 
 [Windeco Preset KLCXP]
 ActiveTitleBarOpacity=100

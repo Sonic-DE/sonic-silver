@@ -6,3 +6,5 @@ install(FILES OpalFruitsDark.colors
         DESTINATION ${KDE_INSTALL_DATADIR}/color-schemes/)
 install(FILES OpalFruitsLight.colors
         DESTINATION ${KDE_INSTALL_DATADIR}/color-schemes/)
+install(FILES SonicColorfulDark.colors
+        DESTINATION ${KDE_INSTALL_DATADIR}/color-schemes/)

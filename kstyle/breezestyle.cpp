@@ -1992,12 +1992,17 @@ void Style::drawToolsAreaBackgroundAndSeparator(QPainter *painter, const QWidget
             color.setColor(colorWithoutAlpha);
         } else if (_helper->decorationConfig()->blurTransparentTitleBars()) { // apply blur to tools area
             if ((w->testAttribute(Qt::WA_WState_Created) || w->internalWinId())) {
-                // PAM: modified from breezeblurhelper.cpp -- did not use _blurHelper->registerWidget() as it doesn't allow you to specify a region, hence
-                // blurring the entire window and causing kornerbug
-                w->winId(); // force creation of the window handle
-                KWindowEffects::enableBlurBehind(w->windowHandle(), true, rect);
+                // Skip if the application has claimed its own full-window blur
+                // (e.g. Konsole terminal blur). Overwriting with a scoped
+                // tools-area region would destroy the application's blur.
+                if (!w->property("_silver_skip_tools_blur").toBool()) {
+                    // PAM: modified from breezeblurhelper.cpp -- did not use _blurHelper->registerWidget() as it doesn't allow you to specify a region, hence
+                    // blurring the entire window and causing kornerbug
+                    w->winId(); // force creation of the window handle
+                    KWindowEffects::enableBlurBehind(w->windowHandle(), true, rect);
 
-                // no force update at this point like in breezeblurhelper.cpp, as already drawing next and creates an infinite loop
+                    // no force update at this point like in breezeblurhelper.cpp, as already drawing next and creates an infinite loop
+                }
             }
         }
     }

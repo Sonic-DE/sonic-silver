@@ -8,9 +8,9 @@
 
 #pragma once
 
-#define SILVER_DECORATION_DEBUG_MODE 0
+#define SILVER_DECORATION_DEBUG_MODE 1
 #define SILVER_STYLE_DEBUG_MODE 0
-#define SILVER_QDEBUG_OUTPUT_PATH_RELATIVE_HOME "/Desktop/silver_debug.txt"
+#define SILVER_QDEBUG_OUTPUT_PATH_RELATIVE_HOME "/.local/state/sonic/silver_debug.txt"
 
 #include "breezecommon_export.h"
 #include "breezesettings.h"

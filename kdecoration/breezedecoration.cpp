@@ -772,6 +772,8 @@ void Decoration::generateDecorationColorsOnDecorationColorSettingsUpdate(QByteAr
     s_kdeGlobalConfig->reparseConfiguration();
 
     updateDecorationColors(clientPalette, uuid);
+    updateOpaque();
+    updateBlur();
 }
 
 void Decoration::generateDecorationColorsOnSystemColorSettingsUpdate(QByteArray uuid)
@@ -782,6 +784,8 @@ void Decoration::generateDecorationColorsOnSystemColorSettingsUpdate(QByteArray 
     s_kdeGlobalConfig->reparseConfiguration();
 
     updateDecorationColors(clientPalette, uuid);
+    updateOpaque();
+    updateBlur();
     update();
 }
 
@@ -1366,6 +1370,16 @@ void Decoration::paint(QPainter *painter, const QRectF &repaintRegion)
     }
 
     m_painting = false;
+
+    if (!m_initialBlurRegionUpdateScheduled) {
+        m_initialBlurRegionUpdateScheduled = true;
+        QMetaObject::invokeMethod(this, [this]() {
+            // The initial blur region can be published before KWin has
+            // attached its blur-region listener to the replacement decoration.
+            // Force a fresh null-to-valid transition after the first paint.
+            setBlurRegion(QRegion());
+            updateBlur(); }, Qt::QueuedConnection);
+    }
 }
 
 void Decoration::calculateWindowShape(bool trimForBlurPath)

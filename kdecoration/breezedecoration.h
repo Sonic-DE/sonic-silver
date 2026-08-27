@@ -272,6 +272,7 @@ private:
 
     //* Whether the paint() method is active
     bool m_painting = false;
+    bool m_initialBlurRegionUpdateScheduled = false;
 
     //* Object to return decoration palette colours
     std::unique_ptr<DecorationColors> m_decorationColors;

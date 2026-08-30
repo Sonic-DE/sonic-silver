@@ -103,4 +103,11 @@
      cx="16.48859"
      style="display:inline;fill:url(#linearGradient2099);fill-opacity:1;stroke:none;stroke-width:1.25"
      id="path4169-06-1-5-7-9-6-03-6-4" />
+  <path
+     id="hotspot"
+     d="m22.981.354h.707v.707h-.707z"
+     display="none"
+     fill="#333"
+     stroke-width=".76062"
+     transform="matrix(.70710678 .70710678 .70710678 -.70710678 0 0)" />
 </svg>

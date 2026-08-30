@@ -70,4 +70,11 @@
      d="m 27.991762,15.487738 -6,-3 -0.84375,2.5 H 9.9917823 v 1 H 21.148012 l 0.84375,2.5 z"
      id="path4801-8-9-0"
      inkscape:connector-curvature="0" />
+  <path
+     id="hotspot"
+     d="m-28.5-16.5h1v1h-1z"
+     display="none"
+     fill="#333"
+     stroke-width="1.07568"
+     transform="scale(-1)" />
 </svg>

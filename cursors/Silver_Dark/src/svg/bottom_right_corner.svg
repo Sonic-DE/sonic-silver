@@ -116,4 +116,10 @@
      id="rect5654-9-4-00-8-2"
      d="m 26.99531,26.99927 v -1 -10 h -1 v 10 h -10 v 1 h 10 z"
      style="display:inline;fill:#161925;fill-opacity:1;stroke:none" />
+  <path
+     id="hotspot"
+     d="m26.85 27.85v-1h1v1z"
+     display="none"
+     fill="#333"
+     stroke-width="1.07568" />
 </svg>

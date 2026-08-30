@@ -91,4 +91,11 @@
      x="-5.0023556"
      y="-24.046606"
      transform="scale(-1)" />
+  <path
+     id="hotspot"
+     d="m-16.5-5.5h1v1h-1z"
+     display="none"
+     fill="#333"
+     stroke-width="1.07568"
+     transform="matrix(0 -1 -1 0 0 0)" />
 </svg>

@@ -131,4 +131,9 @@
      id="path6742"
      inkscape:connector-curvature="0"
      sodipodi:nodetypes="csccccccsc" />
+  <path
+     id="hotspot"
+     d="m4-5h1v1h-1z"
+     display="none"
+     transform="rotate(90)" />
 </svg>

@@ -130,4 +130,11 @@
      d="m 20.00014,18.85594 v 3 h -3 v 1 h 3 v 3 h 1 v -3 h 3 v -1 h -3 v -3 z"
      id="rect5428-0-0"
      inkscape:connector-curvature="0" />
+  <path
+     id="hotspot"
+     d="m-5 4h1v1h-1z"
+     display="none"
+     fill="#333"
+     stroke-width="1.18965"
+     transform="scale(-1 1)" />
 </svg>

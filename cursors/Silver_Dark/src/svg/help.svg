@@ -141,4 +141,11 @@
      cx="20.600294"
      style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none"
      id="path5235-8" />
+  <path
+     id="hotspot"
+     d="m-5 4h1v1h-1z"
+     display="none"
+     fill="#333"
+     stroke-width="1.18965"
+     transform="scale(-1 1)" />
 </svg>

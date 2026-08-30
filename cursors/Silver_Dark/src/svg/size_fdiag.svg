@@ -104,4 +104,11 @@
      style="display:inline;fill:url(#linearGradient2107);fill-opacity:1;stroke:none;stroke-width:1.25"
      id="path4169-06-1-5-7-9-6-03-6-4-8"
      transform="scale(-1,1)" />
+  <path
+     id="hotspot"
+     d="m15.5-17.5h1v1h-1z"
+     display="none"
+     fill="#333"
+     stroke-width="1.07568"
+     transform="rotate(90)" />
 </svg>

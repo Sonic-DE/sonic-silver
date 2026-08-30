@@ -74,4 +74,11 @@
      d="m 24.959099,15.001151 h -7.96875 v -2.1562 l 2.5,-0.8438 -3,-5.9999996 -3,5.9999996 2.5,0.8438 v 2.1562 h -8.03125 v 1 h 8.03125 v 2.1563 l -2.5,0.8437 3,6 3,-6 -2.5,-0.8437 v -2.1563 h 7.96875 z"
      id="path4591-9-8-8-7-2-0-1"
      sodipodi:nodetypes="ccccccccccccccccccc" />
+  <path
+     id="hotspot"
+     d="m-17.5-16.5h1v1h-1z"
+     display="none"
+     fill="#333"
+     stroke-width="1.07568"
+     transform="scale(-1)" />
 </svg>

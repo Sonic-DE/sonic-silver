@@ -202,4 +202,11 @@
        d="m 509.99995,948.37495 h -1 v -9 c 0,-1 1,-1 1,0 z"
        style="fill:url(#linearGradient13483-9);fill-opacity:1;stroke:none" />
   </g>
+  <path
+     id="hotspot"
+     d="m17.5-18.5h1v1h-1z"
+     display="none"
+     fill="#333"
+     stroke-width="1.07568"
+     transform="rotate(90)" />
 </svg>

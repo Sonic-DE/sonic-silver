@@ -72,4 +72,9 @@
      id="path2998-2-3-5-7"
      inkscape:connector-curvature="0"
      sodipodi:nodetypes="cccccccc" />
+  <path
+     id="hotspot"
+     d="m4 4h1v1h-1z"
+     display="none"
+     fill="#333" />
 </svg>

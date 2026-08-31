@@ -9,3 +9,5 @@ CMakeLists.txt.user*
 .vscode
 .directory
 .ccls-cache
+cursors/Silver_Dark/build*
+cursors/Silver_Light/build*

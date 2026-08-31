@@ -37,7 +37,7 @@ Rectangle {
             anchors.centerIn: parent
 
             asynchronous: true
-            source: "images/plasma.svgz"
+            source: "images/sonic.svgz"
 
             sourceSize.width: size
             sourceSize.height: size
@@ -76,16 +76,16 @@ Rectangle {
             Text {
                 color: "#eff0f1"
                 anchors.verticalCenter: parent.verticalCenter
-                text: i18ndc("plasma_lookandfeel_org.kde.lookandfeel", "This is the first text the user sees while starting in the splash screen, should be translated as something short, is a form that can be seen on a product. Plasma is the project name so shouldn't be translated.", "Plasma made by KDE")
+                text: i18ndc("plasma_lookandfeel_org.kde.lookandfeel", "This is the first text the user sees while starting in the splash screen, should be translated as something short, is a form that can be seen on a product. SonicDE is the project name so shouldn't be translated.", "Welcome to SonicDE")
                 Accessible.name: text
                 Accessible.role: Accessible.StaticText
                 textFormat: Text.PlainText
             }
             Image {
                 asynchronous: true
-                source: "images/kde.svgz"
-                sourceSize.height: Kirigami.Units.gridUnit * 2
-                sourceSize.width: Kirigami.Units.gridUnit * 2
+                source: "images/sonicde.svgz"
+                sourceSize.height: 22
+                sourceSize.width: 64
             }
         }
     }

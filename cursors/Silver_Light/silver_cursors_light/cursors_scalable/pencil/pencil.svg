@@ -1,9 +1,94 @@
-<svg id="svg11024" height="32" width="32" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <filter id="filter7078" color-interpolation-filters="sRGB">
-    <feGaussianBlur id="feGaussianBlur7080" stdDeviation=".657"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   id="svg11024"
+   height="32"
+   width="32"
+   version="1.1"
+   sodipodi:docname="pencil.svg"
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <linearGradient
+       id="linearGradient1"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#47f8ff;stop-opacity:1;"
+         offset="0"
+         id="stop1" />
+      <stop
+         style="stop-color:#7019ff;stop-opacity:1;"
+         offset="1"
+         id="stop2" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1"
+       id="linearGradient2"
+       x1="3.0630207"
+       y1="28.630648"
+       x2="4.105772"
+       y2="28.144403"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:zoom="16"
+     inkscape:cx="12.71875"
+     inkscape:cy="18.84375"
+     inkscape:window-width="1920"
+     inkscape:window-height="976"
+     inkscape:window-x="1920"
+     inkscape:window-y="36"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg11024" />
+  <filter
+     id="filter7078"
+     color-interpolation-filters="sRGB"
+     x="-0.088760848"
+     y="-0.088563847"
+     width="1.1775217"
+     height="1.1771277">
+    <feGaussianBlur
+       id="feGaussianBlur7080"
+       stdDeviation=".657" />
   </filter>
-  <path id="path7428" d="m2.844 30.976c-.557-.098-.95-.74-.781-1.28l1.062-3.188c.04-.15.116-.29.219-.407l12.594-12.625a1 1 0 0 1 .593-.28c.305-.043.626.064.844.28l2.125 2.125c.384.372.384 1.066 0 1.438l-12.594 12.625a1 1 0 0 1 -.406.219l-3.187 1.062a1 1 0 0 1 -.47.031" filter="url(#filter7078)" opacity=".2"/>
-  <path id="path4801-6-4-9" d="m16.531 12.2a1 1 0 0 0 -.593.282l-12.594 12.625a1 1 0 0 0 -.219.406l-1.062 3.187a1 1 0 0 0 1.25 1.25l3.187-1.062a1 1 0 0 0 .406-.219l12.594-12.625a1 1 0 0 0 0-1.437l-2.125-2.125a1 1 0 0 0 -.844-.282" opacity=".6"/>
-  <path id="path4801-6-4" d="m16.656 13.2-12.593 12.625-1.063 3.188 3.188-1.063 12.592-12.625zm.031 1.438.688.687-1.313 1.313-.687-.688z" fill="#fff"/>
-  <path id="hotspot" d="m29-4h1v1h-1z" display="none" fill="#333" stroke-width="1.07568" transform="rotate(90)"/>
+  <path
+     id="path7428"
+     d="m2.844 30.976c-.557-.098-.95-.74-.781-1.28l1.062-3.188c.04-.15.116-.29.219-.407l12.594-12.625a1 1 0 0 1 .593-.28c.305-.043.626.064.844.28l2.125 2.125c.384.372.384 1.066 0 1.438l-12.594 12.625a1 1 0 0 1 -.406.219l-3.187 1.062a1 1 0 0 1 -.47.031"
+     filter="url(#filter7078)"
+     opacity=".2" />
+  <path
+     id="path4801-6-4-9"
+     d="m16.531 12.2a1 1 0 0 0 -.593.282l-12.594 12.625a1 1 0 0 0 -.219.406l-1.062 3.187a1 1 0 0 0 1.25 1.25l3.187-1.062a1 1 0 0 0 .406-.219l12.594-12.625a1 1 0 0 0 0-1.437l-2.125-2.125a1 1 0 0 0 -.844-.282"
+     fill="#fff"
+     style="fill:#000000" />
+  <path
+     id="path4801-6-4"
+     d="M 16.656,13.2 4.063,25.825 3.4081519,27.777203 4.1642741,28.624785 6.188,27.95 18.78,15.325 Z m 0.031,1.438 0.688,0.687 -1.313,1.313 -0.687,-0.688 z"
+     sodipodi:nodetypes="cccccccccccc"
+     style="fill:#cdd3e8;fill-opacity:1" />
+  <path
+     id="hotspot"
+     d="m29-4h1v1h-1z"
+     display="none"
+     fill="#333"
+     stroke-width="1.07568"
+     transform="rotate(90)" />
+  <path
+     style="fill:url(#linearGradient2);stroke-width:2.346"
+     d="M 3.4073881,27.775376 4.1635748,28.623097 2.9974031,29.0153 Z"
+     id="path1"
+     sodipodi:nodetypes="cccc" />
 </svg>

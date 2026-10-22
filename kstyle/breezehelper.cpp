@@ -1847,8 +1847,16 @@ QPainterPath Helper::roundedPath(const QRectF &rect, Corners corners, qreal radi
 bool Helper::compositingActive() const
 {
     if (isX11()) {
-#if __has_include(<KX11Extras>)
+#if QT_CONFIG(xcb) && __has_include(<KX11Extras>)
+        // X11-only compatibility does not imply this particular Qt process has
+        // an X connection (e.g. offscreen thumbnail workers).
+        const auto native = qGuiApp ? qGuiApp->nativeInterface<QNativeInterface::QX11Application>() : nullptr;
+        if (!native || !native->connection() || !native->display()) {
+            return false;
+        }
         return KX11Extras::compositingActive();
+#else
+        return false;
 #endif
     }
 

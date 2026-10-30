@@ -11,6 +11,7 @@
 #include "breezecommon_export.h"
 #include "decorationbuttoncolors.h"
 #include <KColorScheme>
+#include <KToolsArea>
 #include <QColor>
 #include <QObject>
 #include <QPalette>
@@ -88,6 +89,12 @@ public:
         return *m_colorsGenerated;
     }
 
+    // The titlebar transparency (KToolsArea) the next generation uses; opaque until set.
+    void setToolsArea(const KToolsArea::Settings& toolsArea)
+    {
+        m_toolsArea = toolsArea;
+    }
+
     QPalette *basePalette()
     {
         return m_basePalette;
@@ -155,6 +162,8 @@ public:
                                          QString colorSchemePath = QString());
 
 private:
+    KToolsArea::Settings m_toolsArea;
+
     void generateDecorationPaletteGroup(const QPalette &palette,
                                         const QSharedPointer<InternalSettings> decorationSettings,
                                         const bool active,

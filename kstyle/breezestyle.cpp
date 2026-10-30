@@ -1985,12 +1985,12 @@ void Style::drawToolsAreaBackgroundAndSeparator(QPainter *painter, const QWidget
 
     QBrush color = _toolsAreaManager->palette().brush(w->isActiveWindow() ? QPalette::Active : QPalette::Inactive, QPalette::Window);
 
-    if (_helper->decorationConfig()->applyOpacityToHeader() && color.color().alpha() < 255) {
-        if ((w->isMaximized() || w->isFullScreen()) && _helper->decorationConfig()->opaqueMaximizedTitleBars()) {
+    if (_helper->toolsArea().applyOpacityToHeader && color.color().alpha() < 255) {
+        if ((w->isMaximized() || w->isFullScreen()) && _helper->toolsArea().opaqueWhenMaximized) {
             QColor colorWithoutAlpha = color.color();
             colorWithoutAlpha.setAlpha(255);
             color.setColor(colorWithoutAlpha);
-        } else if (_helper->decorationConfig()->blurTransparentTitleBars()) { // apply blur to tools area
+        } else if (_helper->toolsArea().blurBehind) { // apply blur to tools area
             if ((w->testAttribute(Qt::WA_WState_Created) || w->internalWinId())) {
                 // Skip if the application has claimed its own full-window blur
                 // (e.g. Konsole terminal blur). Overwriting with a scoped
@@ -2014,9 +2014,13 @@ void Style::drawToolsAreaBackgroundAndSeparator(QPainter *painter, const QWidget
     painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
     painter->setRenderHints(QPainter::Antialiasing);
 
-    QColor penColor = _helper->separatorColor(_toolsAreaManager->palette());
-    if (faintSeparator) {
-        penColor.setAlphaF(penColor.alphaF() * 0.3);
+    // A theme's [ToolsArea] SeparatorColor is used as given.
+    QColor penColor = _helper->toolsArea().separatorColor;
+    if (!penColor.isValid()) {
+        penColor = _helper->separatorColor(_toolsAreaManager->palette());
+        if (faintSeparator) {
+            penColor.setAlphaF(penColor.alphaF() * 0.3);
+        }
     }
     QPen pen(penColor, PenWidth::Frame * qRound(w->devicePixelRatioF()));
     pen.setColor(penColor);

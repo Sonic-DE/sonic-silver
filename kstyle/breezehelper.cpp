@@ -102,6 +102,9 @@ void Helper::loadConfig()
     } else {
         _colorSchemeConfig = KSharedConfig::openConfig(colorSchemePath, KConfig::SimpleConfig);
     }
+    // The theme-independent titlebar transparency for this application (KF6::ColorScheme).
+    _colorSchemeConfig->reparseConfiguration();
+    _toolsArea = KToolsArea::settings(_colorSchemeConfig, qAppName());
 
     // bool isApplicationSpecificColorScheme = (!colorSchemePath.isEmpty() && colorSchemePath != QStringLiteral("kdeglobals"));
 
@@ -147,13 +150,14 @@ void Helper::loadConfig()
                                                    colorSchemePath);
 
         bool colorSchemeHasHeaderColor = KColorScheme::isColorSetSupported(_colorSchemeConfig, KColorScheme::Header);
-        if (_decorationConfig->matchTitleBarToApplicationColor() && !colorSchemeHasHeaderColor) {
+        if (_toolsArea.matchApplicationColor && !colorSchemeHasHeaderColor) {
             _systemActiveTitleBarColor = palette.color(QPalette::ColorGroup::Active, QPalette::ColorRole::Window);
             _systemInactiveTitleBarColor = palette.color(QPalette::ColorGroup::Inactive, QPalette::ColorRole::Window);
             _systemActiveTitleBarTextColor = palette.color(QPalette::ColorGroup::Active, QPalette::ColorRole::WindowText);
             _systemInactiveTitleBarTextColor = palette.color(QPalette::ColorGroup::Inactive, QPalette::ColorRole::WindowText);
         }
 
+        _decorationColors->setToolsArea(_toolsArea);
         _decorationColors->generateDecorationColors(palette,
                                                     _decorationConfig,
                                                     _systemActiveTitleBarTextColor,

@@ -13,6 +13,18 @@
 
 namespace Breeze
 {
+namespace {
+    // QWidget::destroy() and create() are protected; pointers to them named in a derived
+    // class call them.
+    struct WidgetAccess : QWidget {
+        static void recreateNativeWindow(QWidget* widget)
+        {
+            (widget->*(&WidgetAccess::destroy))(true, true);
+            (widget->*(&WidgetAccess::create))(0, true, true);
+        }
+    };
+}
+
 ToolsAreaManager::ToolsAreaManager(std::shared_ptr<Helper> helper)
     : QObject()
     , _helper(helper)
@@ -67,6 +79,14 @@ void ToolsAreaManager::doTranslucency(QMainWindow *win, bool on)
 
         win->setProperty("_silver_was_translucent", win->testAttribute(Qt::WA_TranslucentBackground));
         win->setAttribute(Qt::WA_TranslucentBackground, true);
+        // Qt creates a window's native window before polishing it (QWidgetPrivate::setVisible),
+        // so on its first show it exists without an alpha channel and the translucent tools
+        // area would be drawn over black. It isn't mapped yet: recreate it (Qt's
+        // updateIsTranslucent() points to destroy() and create() for this).
+        QWindow* handle = win->windowHandle();
+        if (win->testAttribute(Qt::WA_WState_Created) && !win->isVisible() && handle && handle->format().alphaBufferSize() < 8) {
+            WidgetAccess::recreateNativeWindow(win);
+        }
     } else {
         if (!wasTranslucent.isValid()) // do not turn off translucency if it was initially set by a third party
             return;
@@ -154,9 +174,9 @@ void ToolsAreaManager::configUpdated()
         _palette.setBrush(QPalette::Inactive, QPalette::WindowText, inactive.foreground());
     }
 
-    // add opacity from decoration, if in Header or added in Silver settings
-    if (_colorSchemeHasHeaderColor || _helper->decorationConfig()->matchTitleBarToApplicationColor()) {
-        if (_helper->decorationConfig()->applyOpacityToHeader() && !_helper->decorationConfig()->preventApplyOpacityToHeader()) {
+    // the titlebar's opacity (KToolsArea), with header colours
+    if (_colorSchemeHasHeaderColor || _helper->toolsArea().matchApplicationColor) {
+        if (_helper->toolsArea().applyOpacityToHeader) {
             // override active with colour with opacity from decoration if needed
             _palette.setColor(QPalette::Active, QPalette::Window, _helper->decorationColors()->active()->titleBarBase);
 
@@ -169,6 +189,10 @@ void ToolsAreaManager::configUpdated()
             }
         }
     }
+
+    // With the shared titlebar settings on, main windows get an alpha channel even while
+    // the header is opaque, so it can turn translucent later without recreating windows.
+    translucent = translucent || _helper->toolsArea().enabled;
 
     if (translucent != _translucent) {
         if (translucent)
@@ -187,6 +211,9 @@ void ToolsAreaManager::configUpdated()
         if (QMenuBar *menuBar = windowToolBars.window->menuBar()) {
             menuBar->setPalette(_palette);
         }
+        // The window paints the tools area background (drawMainWindow()): repaint it so
+        // a settings change shows at once.
+        const_cast<QMainWindow*>(windowToolBars.window)->update();
     }
 }
 
@@ -322,6 +349,6 @@ void ToolsAreaManager::unregisterWidget(QWidget *widget)
 
 bool Breeze::ToolsAreaManager::hasHeaderColors()
 {
-    return _colorSchemeHasHeaderColor || _helper->decorationConfig()->matchTitleBarToApplicationColor();
+    return _colorSchemeHasHeaderColor || _helper->toolsArea().matchApplicationColor;
 }
 }

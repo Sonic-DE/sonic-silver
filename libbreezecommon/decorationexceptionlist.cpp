@@ -21,15 +21,8 @@ void DecorationExceptionList::readConfig(KSharedConfig::Ptr config, const bool r
     _exceptions.clear();
     _defaultExceptions.clear();
 
-    // set the default exceptions that are bundled with Silver
-    InternalSettingsPtr defaultException0(new InternalSettings());
-    defaultException0->setExceptionWindowPropertyType(InternalSettings::EnumExceptionWindowPropertyType::ExceptionWindowClassName);
-    defaultException0->setExceptionWindowPropertyPattern(QStringLiteral(""));
-    defaultException0->setOpaqueTitleBar(false);
-    defaultException0->setExceptionProgramNamePattern(QStringLiteral("VirtualBox.*"));
-    defaultException0->setPreventApplyOpacityToHeader(true);
-    _defaultExceptions.append(defaultException0);
-
+    // Silver bundles no default exceptions any more: its VirtualBox one only changed the
+    // header transparency, which is the shared default exception of KToolsArea now.
     QString groupName;
 
     // load default enabled settings for the default exceptions
@@ -69,9 +62,6 @@ void DecorationExceptionList::readIndividualExceptionFromConfig(KSharedConfig::P
     if (exception.exceptionBorder())
         configuration->setBorderSize(exception.borderSize());
     configuration->setHideTitleBar(exception.hideTitleBar());
-    configuration->setOpaqueTitleBar(exception.opaqueTitleBar());
-    configuration->setExceptionMatchTitleBarToApplicationColor(exception.exceptionMatchTitleBarToApplicationColor());
-    configuration->setPreventApplyOpacityToHeader(exception.preventApplyOpacityToHeader());
 
     // append to exceptions
     appendTo.append(configuration);

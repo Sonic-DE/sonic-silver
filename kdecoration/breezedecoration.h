@@ -26,6 +26,8 @@
 #include <QVariant>
 #include <QVariantAnimation>
 
+#include <KToolsArea>
+
 #include <memory>
 
 namespace KDecoration3
@@ -267,6 +269,8 @@ private:
 
     static KSharedConfig::Ptr s_kdeGlobalConfig;
     InternalSettingsPtr m_internalSettings;
+    // The theme-independent titlebar transparency for this window (KToolsArea).
+    KToolsArea::Settings m_toolsArea;
     KDecoration3::DecorationButtonGroup *m_leftButtons = nullptr;
     KDecoration3::DecorationButtonGroup *m_rightButtons = nullptr;
 

@@ -73,7 +73,6 @@ private Q_SLOTS:
     //* read properties of selected window
     void readWindowProperties(bool);
 
-    void onOpaqueTitleBarToggled(bool);
 
 private:
     Ui::BreezeExceptionDialog m_ui;

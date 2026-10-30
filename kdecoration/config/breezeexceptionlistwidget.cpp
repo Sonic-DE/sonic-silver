@@ -300,13 +300,9 @@ void ExceptionListWidget::resizeColumns() const
 bool ExceptionListWidget::checkException(InternalSettingsPtr exception)
 {
     while ((exception->exceptionProgramNamePattern().isEmpty() && exception->exceptionWindowPropertyPattern().isEmpty())
-           || (exception->preventApplyOpacityToHeader() && exception->exceptionProgramNamePattern().isEmpty())
            || !QRegularExpression(exception->exceptionProgramNamePattern()).isValid()
            || !QRegularExpression(exception->exceptionWindowPropertyPattern()).isValid()) {
-        if (exception->preventApplyOpacityToHeader() && exception->exceptionProgramNamePattern().isEmpty()) {
-            QMessageBox::warning(this, i18n("Warning - Silver Settings"), i18n("Please provide an application name to match"));
-        } else
-            QMessageBox::warning(this, i18n("Warning - Silver Settings"), i18n("Regular Expression syntax is incorrect"));
+        QMessageBox::warning(this, i18n("Warning - Silver Settings"), i18n("Regular Expression syntax is incorrect"));
         QPointer<ExceptionDialog> dialog(new ExceptionDialog(m_configuration, m_presetsConfiguration, this));
         dialog->setException(exception);
         if (dialog->exec() == QDialog::Rejected) {

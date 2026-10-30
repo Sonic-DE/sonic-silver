@@ -58,6 +58,12 @@ public:
 
     KSharedConfigPtr colorSchemeConfig() const;
 
+    // The theme-independent titlebar transparency for this application (KToolsArea).
+    const KToolsArea::Settings& toolsArea() const
+    {
+        return _toolsArea;
+    }
+
     //*@name color utilities
     //@{
     void setGenerateDecorationColorsOnDecorationColorSettingsUpdateFlag(QByteArray *uuid)
@@ -412,6 +418,7 @@ private:
     //* KWin configuration
     KSharedConfig::Ptr _kwinConfig;
     KSharedConfigPtr _colorSchemeConfig;
+    KToolsArea::Settings _toolsArea;
 
     //* decoration configuration
     QSharedPointer<InternalSettings> _decorationConfig;

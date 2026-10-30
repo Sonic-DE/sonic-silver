@@ -13,7 +13,6 @@ set(breezedecoration_config_SRCS
     buttoncolors.cpp
     buttonbehaviour.cpp
     titlebarspacing.cpp
-    titlebaropacity.cpp
     shadowstyle.cpp
 )
 
@@ -28,7 +27,6 @@ ki18n_wrap_ui(breezedecoration_config_SRCS
    ui/buttoncolors.ui
    ui/buttonbehaviour.ui
    ui/titlebarspacing.ui
-   ui/titlebaropacity.ui
    ui/shadowstyle.ui
 )
 

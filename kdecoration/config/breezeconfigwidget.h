@@ -20,7 +20,6 @@
 #include "kdecorationglobals.h"
 #include "loadpreset.h"
 #include "shadowstyle.h"
-#include "titlebaropacity.h"
 #include "titlebarspacing.h"
 #include "ui_breezeconfigurationui.h"
 #include "windowoutlinestyle.h"
@@ -87,11 +86,6 @@ public:
         return m_ui.buttonShape->currentIndex();
     }
 
-    bool matchTitleBarToApplicationColor()
-    {
-        return m_ui.matchTitleBarToApplicationColor->isChecked();
-    }
-
     QList<DecorationButtonType> m_visibleButtonsOrder; // ordered visible buttons (visible + an added dummy Custom button used in the icon display
                                                        // of the colour palette for "other" buttons)
     QList<DecorationButtonType>
@@ -112,7 +106,6 @@ protected Q_SLOTS:
     void buttonColorsButtonClicked();
     void buttonBehaviourButtonClicked();
     void titleBarSpacingButtonClicked();
-    void titleBarOpacityButtonClicked();
     void shadowStyleButtonClicked();
     void windowOutlineStyleButtonClicked();
     void presetsButtonClicked();
@@ -152,7 +145,6 @@ private:
     ButtonColors *m_buttonColorsDialog;
     ButtonBehaviour *m_buttonBehaviourDialog;
     TitleBarSpacing *m_titleBarSpacingDialog;
-    TitleBarOpacity *m_titleBarOpacityDialog;
     ShadowStyle *m_shadowStyleDialog;
     WindowOutlineStyle *m_windowOutlineStyleDialog;
     LoadPreset *m_loadPresetDialog;

@@ -125,28 +125,15 @@ void DecorationColors::generateDecorationPaletteGroup(const QPalette &palette,
     (*decorationPaletteGroup)->titleBarBase = active ? titleBarBaseActive : titleBarBaseInactive;
     (*decorationPaletteGroup)->titleBarText = active ? titleBarTextActive : titleBarTextInactive;
 
-    if (decorationSettings->matchTitleBarToApplicationColor()) {
+    if (m_toolsArea.matchApplicationColor) {
         ColorTools::getHigherContrastForegroundColor((*decorationPaletteGroup)->titleBarText, // adjust the text colour to black/white if poor contrast
                                                      (*decorationPaletteGroup)->titleBarBase,
                                                      1.5,
                                                      (*decorationPaletteGroup)->titleBarText);
     }
 
-    bool setTitleBarBaseOpacity = false;
-    if (!decorationSettings->opaqueTitleBar()) {
-        if ((*decorationPaletteGroup)->titleBarBase.alpha() == 255) {
-            setTitleBarBaseOpacity = true;
-        } else {
-            bool override = active ? decorationSettings->overrideActiveTitleBarOpacity() : decorationSettings->overrideInactiveTitleBarOpacity();
-            if (override) {
-                setTitleBarBaseOpacity = true;
-            }
-        }
-    }
-    if (setTitleBarBaseOpacity) {
-        (*decorationPaletteGroup)
-            ->titleBarBase.setAlphaF(qreal(active ? decorationSettings->activeTitleBarOpacity() : decorationSettings->inactiveTitleBarOpacity()) / 100);
-    }
+    // The theme-independent titlebar opacity (KToolsArea) as the colour's alpha.
+    (*decorationPaletteGroup)->titleBarBase.setAlphaF(qreal(active ? m_toolsArea.activeOpacity : m_toolsArea.inactiveOpacity) / 100);
 
     KStatefulBrush buttonFocusStatefulBrush;
     KStatefulBrush buttonHoverStatefulBrush;

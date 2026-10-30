@@ -12,6 +12,9 @@
 #include "kdecorationglobals.h"
 #include "presetsmodel.h"
 
+#include <KToolsArea>
+#include <QDBusConnection>
+#include <QDBusMessage>
 #include <QDateTime>
 #include <QRegularExpression>
 #include <QTextStream>
@@ -49,6 +52,15 @@ SettingsProvider *SettingsProvider::self()
 //__________________________________________________________________
 void SettingsProvider::reconfigure()
 {
+    // Silver users' earlier titlebar transparency moves to the shared settings once, so
+    // they see no change.
+    const KSharedConfigPtr kdeglobals = KSharedConfig::openConfig(QStringLiteral("kdeglobals"));
+    kdeglobals->reparseConfiguration();
+    if (KToolsArea::migrateFromSilver(kdeglobals)) {
+        QDBusMessage message = QDBusMessage::createSignal(QStringLiteral("/KGlobalSettings"), QStringLiteral("org.kde.KGlobalSettings"), QStringLiteral("notifyChange"));
+        message << 0 << 0; // KGlobalSettings::PaletteChanged, as a colour scheme change
+        QDBusConnection::sessionBus().send(message);
+    }
     m_defaultSettings->load();
 
     DecorationExceptionList exceptions;
@@ -121,13 +133,6 @@ InternalSettingsPtr SettingsProvider::internalSettings(Decoration *decoration)
                 internalSettings->setProperty("noCacheException",
                                               true); // this property is to indicate not to cache shadows or colours for an exception with a Preset
                                                      // -- this is because the Preset exception can alter shadows and colours
-            }
-            if (internalSettings->opaqueTitleBar()) {
-                internalSettings->setProperty("noCacheException", true);
-            }
-            if (internalSettings->exceptionMatchTitleBarToApplicationColor()) {
-                internalSettings->setProperty("noCacheException", true);
-                internalSettings->setMatchTitleBarToApplicationColor(true);
             }
 #if KDECORATION_VERSION < KDECORATION_VERSION_CHECK(6, 5, 0)
             internalSettings->setRoundAllCornersWhenNoBorders(false);

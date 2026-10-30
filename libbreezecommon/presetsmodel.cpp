@@ -7,6 +7,13 @@
 
 #include "presetsmodel.h"
 #include <KConfigGroup>
+#include <KSharedConfig>
+#include <KToolsArea>
+#include <algorithm>
+#if HAVE_QTDBUS
+#include <QDBusConnection>
+#include <QDBusMessage>
+#endif
 #include <QDir>
 #include <QRegularExpression>
 
@@ -30,6 +37,18 @@ void PresetsModel::writePreset(KCoreConfigSkeleton *skeleton, KConfig *presetsCo
 
         KConfigGroup configGroup(presetsConfig, groupName);
         writeSkeletonItemToConfigGroup(item, configGroup);
+    }
+
+    // The shared titlebar transparency in effect, under the keys presets have always used.
+    if (!groupName.isEmpty()) {
+        const KToolsArea::Settings settings = KToolsArea::settings(KSharedConfig::openConfig(QStringLiteral("kdeglobals")));
+        KConfigGroup configGroup(presetsConfig, groupName);
+        configGroup.writeEntry("ActiveTitleBarOpacity", settings.activeOpacity);
+        configGroup.writeEntry("InactiveTitleBarOpacity", settings.inactiveOpacity);
+        configGroup.writeEntry("OpaqueMaximizedTitleBars", settings.opaqueWhenMaximized);
+        configGroup.writeEntry("BlurTransparentTitleBars", settings.blurBehind);
+        configGroup.writeEntry("ApplyOpacityToHeader", settings.applyOpacityToHeader);
+        configGroup.writeEntry("MatchTitleBarToApplicationColor", settings.matchApplicationColor);
     }
 
     // read kwin window border setting and write to the preset
@@ -118,6 +137,27 @@ bool PresetsModel::loadPresetAndSave(KCoreConfigSkeleton *skeleton,
 {
     if (!loadPreset(skeleton, presetsConfig, presetName, writeKwinBorderConfig)) {
         return false;
+    }
+
+    // The preset's titlebar transparency (its earlier Silver keys, with Silver's defaults)
+    // becomes the shared titlebar settings, which every theme and application follows live.
+    {
+        const KConfigGroup preset(presetsConfig, presetGroupName(presetName));
+        const KSharedConfigPtr kdeglobals = KSharedConfig::openConfig(QStringLiteral("kdeglobals"));
+        KToolsArea::Settings settings = KToolsArea::settings(kdeglobals);
+        settings.activeOpacity = std::clamp(preset.readEntry("ActiveTitleBarOpacity", 100), 0, 100);
+        settings.inactiveOpacity = std::clamp(preset.readEntry("InactiveTitleBarOpacity", 100), 0, 100);
+        settings.opaqueWhenMaximized = preset.readEntry("OpaqueMaximizedTitleBars", true);
+        settings.blurBehind = preset.readEntry("BlurTransparentTitleBars", true);
+        settings.applyOpacityToHeader = preset.readEntry("ApplyOpacityToHeader", true);
+        settings.matchApplicationColor = preset.readEntry("MatchTitleBarToApplicationColor", false);
+        KToolsArea::writeSettings(kdeglobals, settings);
+        kdeglobals->sync();
+#if HAVE_QTDBUS
+        QDBusMessage message = QDBusMessage::createSignal(QStringLiteral("/KGlobalSettings"), QStringLiteral("org.kde.KGlobalSettings"), QStringLiteral("notifyChange"));
+        message << 0 << 0; // KGlobalSettings::PaletteChanged, as a colour scheme change
+        QDBusConnection::sessionBus().send(message);
+#endif
     }
 
     for (KConfigSkeletonItem *item : skeleton->items()) {

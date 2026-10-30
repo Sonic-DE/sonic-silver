@@ -14,6 +14,7 @@
 #include "decorationexceptionlist.h"
 #include "presetsmodel.h"
 #include "renderdecorationbuttonicon.h"
+#include <KToolsArea>
 
 #include <KLocalizedString>
 
@@ -113,7 +114,6 @@ ConfigWidget::ConfigWidget(QObject *parent, const KPluginMetaData &data, const Q
     m_buttonColorsDialog = new ButtonColors(m_configuration, m_presetsConfiguration, this);
     m_buttonBehaviourDialog = new ButtonBehaviour(m_configuration, m_presetsConfiguration, this);
     m_titleBarSpacingDialog = new TitleBarSpacing(m_configuration, m_presetsConfiguration, this);
-    m_titleBarOpacityDialog = new TitleBarOpacity(m_configuration, m_presetsConfiguration, this);
     m_windowOutlineStyleDialog = new WindowOutlineStyle(m_configuration, m_presetsConfiguration, this);
     m_shadowStyleDialog = new ShadowStyle(m_configuration, m_presetsConfiguration, this);
 
@@ -121,15 +121,11 @@ ConfigWidget::ConfigWidget(QObject *parent, const KPluginMetaData &data, const Q
     connect(m_buttonColorsDialog, &ButtonColors::changed, this, &ConfigWidget::updateChanged, Qt::ConnectionType::DirectConnection);
     connect(m_buttonBehaviourDialog, &ButtonBehaviour::changed, this, &ConfigWidget::updateChanged, Qt::ConnectionType::DirectConnection);
     connect(m_titleBarSpacingDialog, &TitleBarSpacing::changed, this, &ConfigWidget::updateChanged, Qt::ConnectionType::DirectConnection);
-    connect(m_titleBarOpacityDialog, &TitleBarOpacity::changed, this, &ConfigWidget::updateChanged, Qt::ConnectionType::DirectConnection);
     connect(m_windowOutlineStyleDialog, &WindowOutlineStyle::changed, this, &ConfigWidget::updateChanged, Qt::ConnectionType::DirectConnection);
     connect(m_shadowStyleDialog, &ShadowStyle::changed, this, &ConfigWidget::updateChanged, Qt::ConnectionType::DirectConnection);
 
     // the displayed colours in the ButtonColors UI depend upon ButtonBehaviour
     connect(m_buttonBehaviourDialog, &ButtonBehaviour::saved, m_buttonColorsDialog, &ButtonColors::loadButtonPaletteColorsIcons);
-
-    // the titlbar opacity can vary with matchTitleBarToApplicationColor option
-    connect(m_ui.matchTitleBarToApplicationColor, &QAbstractButton::clicked, m_titleBarOpacityDialog, &TitleBarOpacity::load);
 
     // update the horizontal header icons in-case the icon style has changed
     connect(this, &ConfigWidget::saved, m_buttonColorsDialog, &ButtonColors::load);
@@ -141,7 +137,6 @@ ConfigWidget::ConfigWidget(QObject *parent, const KPluginMetaData &data, const Q
     connect(m_ui.buttonColorsButton, &QAbstractButton::clicked, this, &ConfigWidget::buttonColorsButtonClicked);
     connect(m_ui.buttonBehaviourButton, &QAbstractButton::clicked, this, &ConfigWidget::buttonBehaviourButtonClicked);
     connect(m_ui.titleBarSpacingButton, &QAbstractButton::clicked, this, &ConfigWidget::titleBarSpacingButtonClicked);
-    connect(m_ui.titleBarOpacityButton, &QAbstractButton::clicked, this, &ConfigWidget::titleBarOpacityButtonClicked);
     connect(m_ui.windowOutlineStyleButton, &QAbstractButton::clicked, this, &ConfigWidget::windowOutlineStyleButtonClicked);
     connect(m_ui.shadowStyleButton, &QAbstractButton::clicked, this, &ConfigWidget::shadowStyleButtonClicked);
 
@@ -158,7 +153,6 @@ ConfigWidget::ConfigWidget(QObject *parent, const KPluginMetaData &data, const Q
     connect(m_ui.boldButtonIcons, SIGNAL(currentIndexChanged(int)), SLOT(updateChanged()), Qt::ConnectionType::DirectConnection);
     connect(m_ui.boldButtonIcons, qOverload<int>(&QComboBox::currentIndexChanged), this, &ConfigWidget::updateWindowControlPreviewIcons);
     connect(m_ui.drawBorderOnMaximizedWindows, &QAbstractButton::toggled, this, &ConfigWidget::updateChanged, Qt::ConnectionType::DirectConnection);
-    connect(m_ui.matchTitleBarToApplicationColor, &QAbstractButton::toggled, this, &ConfigWidget::updateChanged, Qt::ConnectionType::DirectConnection);
     connect(m_ui.drawBackgroundGradient, &QAbstractButton::toggled, this, &ConfigWidget::updateChanged, Qt::ConnectionType::DirectConnection);
     connect(m_ui.drawTitleBarSeparator, &QAbstractButton::toggled, this, &ConfigWidget::updateChanged, Qt::ConnectionType::DirectConnection);
     connect(m_ui.boldTitle, &QAbstractButton::toggled, this, &ConfigWidget::updateChanged, Qt::ConnectionType::DirectConnection);
@@ -196,6 +190,8 @@ void ConfigWidget::load()
     // create internal settings and load from rc files
     m_internalSettings = InternalSettingsPtr(new InternalSettings());
     m_internalSettings->load();
+    // The titlebar opacity settings moved to the theme-independent [ToolsArea] settings.
+    KToolsArea::migrateFromSilver(KSharedConfig::openConfig(QStringLiteral("kdeglobals")));
     getButtonsOrderFromKwinConfig();
 
     PresetsModel::importBundledPresets(m_presetsConfiguration.data());
@@ -211,7 +207,6 @@ void ConfigWidget::load()
 
     m_ui.drawBorderOnMaximizedWindows->setChecked(m_internalSettings->drawBorderOnMaximizedWindows());
     m_ui.boldButtonIcons->setCurrentIndex(m_internalSettings->boldButtonIcons());
-    m_ui.matchTitleBarToApplicationColor->setChecked(m_internalSettings->matchTitleBarToApplicationColor());
     m_ui.drawBackgroundGradient->setChecked(m_internalSettings->drawBackgroundGradient());
     m_ui.drawTitleBarSeparator->setChecked(m_internalSettings->drawTitleBarSeparator());
     m_ui.boldTitle->setChecked(m_internalSettings->boldTitle());
@@ -231,7 +226,6 @@ void ConfigWidget::load()
     m_buttonColorsDialog->load();
     m_buttonBehaviourDialog->load();
     m_titleBarSpacingDialog->load();
-    m_titleBarOpacityDialog->load();
     m_windowOutlineStyleDialog->load();
     m_shadowStyleDialog->load();
 
@@ -270,7 +264,6 @@ void ConfigWidget::saveMain(QString saveAsPresetName)
     m_internalSettings->setWindowCornerRadius(m_ui.cornerRadius->value());
     m_internalSettings->setBoldButtonIcons(m_ui.boldButtonIcons->currentIndex());
     m_internalSettings->setDrawBorderOnMaximizedWindows(m_ui.drawBorderOnMaximizedWindows->isChecked());
-    m_internalSettings->setMatchTitleBarToApplicationColor(m_ui.matchTitleBarToApplicationColor->isChecked());
     m_internalSettings->setDrawBackgroundGradient(m_ui.drawBackgroundGradient->isChecked());
     m_internalSettings->setDrawTitleBarSeparator(m_ui.drawTitleBarSeparator->isChecked());
     m_internalSettings->setBoldTitle(m_ui.boldTitle->isChecked());
@@ -286,7 +279,6 @@ void ConfigWidget::saveMain(QString saveAsPresetName)
     m_buttonColorsDialog->save(false);
     m_buttonBehaviourDialog->save(false);
     m_titleBarSpacingDialog->save(false);
-    m_titleBarOpacityDialog->save(false);
     m_shadowStyleDialog->save(false);
     m_windowOutlineStyleDialog->save(false);
 
@@ -340,7 +332,6 @@ void ConfigWidget::defaults()
     m_ui.cornerRadius->setValue(m_internalSettings->windowCornerRadius());
     m_ui.boldButtonIcons->setCurrentIndex(m_internalSettings->boldButtonIcons());
     m_ui.drawBorderOnMaximizedWindows->setChecked(m_internalSettings->drawBorderOnMaximizedWindows());
-    m_ui.matchTitleBarToApplicationColor->setChecked(m_internalSettings->matchTitleBarToApplicationColor());
     m_ui.drawBackgroundGradient->setChecked(m_internalSettings->drawBackgroundGradient());
     m_ui.animationsEnabled->setChecked(m_internalSettings->animationsEnabled());
     m_ui.animationsSpeedRelativeSystem->setValue(m_internalSettings->animationsSpeedRelativeSystem());
@@ -357,7 +348,6 @@ void ConfigWidget::defaults()
     m_buttonColorsDialog->defaults();
     m_buttonBehaviourDialog->defaults();
     m_titleBarSpacingDialog->defaults();
-    m_titleBarOpacityDialog->defaults();
     m_windowOutlineStyleDialog->defaults();
     m_shadowStyleDialog->defaults();
 
@@ -404,10 +394,6 @@ bool ConfigWidget::isDefaults()
     }
 
     if (!m_titleBarSpacingDialog->isDefaults()) {
-        return false;
-    }
-
-    if (!m_titleBarOpacityDialog->isDefaults()) {
         return false;
     }
 
@@ -460,8 +446,6 @@ void ConfigWidget::updateChanged()
         modified = true;
     else if (m_ui.drawBorderOnMaximizedWindows->isChecked() != m_internalSettings->drawBorderOnMaximizedWindows())
         modified = true;
-    else if (m_ui.matchTitleBarToApplicationColor->isChecked() != m_internalSettings->matchTitleBarToApplicationColor())
-        modified = true;
     else if (m_ui.drawBackgroundGradient->isChecked() != m_internalSettings->drawBackgroundGradient())
         modified = true;
     else if (qAbs(m_ui.cornerRadius->value() - m_internalSettings->windowCornerRadius()) > 0.001)
@@ -483,8 +467,6 @@ void ConfigWidget::updateChanged()
     else if (m_buttonBehaviourDialog->m_changed)
         modified = true;
     else if (m_titleBarSpacingDialog->m_changed)
-        modified = true;
-    else if (m_titleBarOpacityDialog->m_changed)
         modified = true;
     else if (m_windowOutlineStyleDialog->m_changed)
         modified = true;
@@ -559,12 +541,6 @@ void ConfigWidget::titleBarSpacingButtonClicked()
 {
     m_titleBarSpacingDialog->setWindowTitle(i18n("Titlebar Spacing - Silver Settings"));
     m_titleBarSpacingDialog->show();
-}
-
-void ConfigWidget::titleBarOpacityButtonClicked()
-{
-    m_titleBarOpacityDialog->setWindowTitle(i18n("Titlebar Opacity - Silver Settings"));
-    m_titleBarOpacityDialog->show();
 }
 
 void ConfigWidget::shadowStyleButtonClicked()

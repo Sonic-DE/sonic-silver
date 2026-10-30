@@ -5,8 +5,10 @@
  * SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
  */
 #include "dbusupdatenotifier.h"
+#include <KToolsArea>
 #include <QDBusConnection>
 #include <QDBusMessage>
+#include <QUuid>
 
 namespace Breeze
 {
@@ -31,6 +33,24 @@ DBusUpdateNotifier::DBusUpdateNotifier()
                            QStringLiteral("updateDecorationColorCache"),
                            this,
                            SLOT(onWindowDecorationSettingsUpdate()));
+
+    dBusConnection.connect(QString(),
+        QStringLiteral("/KGlobalSettings"),
+        QStringLiteral("org.kde.KGlobalSettings"),
+        QStringLiteral("notifyChange"),
+        this,
+        SLOT(onGlobalSettingsChange()));
+}
+
+void DBusUpdateNotifier::onGlobalSettingsChange()
+{
+    const KSharedConfigPtr kdeglobals = KSharedConfig::openConfig(QStringLiteral("kdeglobals"));
+    kdeglobals->reparseConfiguration();
+    const QString snapshot = KToolsArea::snapshot(kdeglobals);
+    if (snapshot != m_toolsAreaSnapshot) {
+        m_toolsAreaSnapshot = snapshot;
+        Q_EMIT decorationSettingsUpdate(QUuid::createUuid().toByteArray());
+    }
 }
 
 void DBusUpdateNotifier::onWindowDecorationSettingsUpdate()

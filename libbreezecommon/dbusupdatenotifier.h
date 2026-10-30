@@ -25,11 +25,17 @@ public:
 public Q_SLOTS:
     void onWindowDecorationSettingsUpdate();
     void onSystemSettingUpdate(QString, QString, QDBusVariant);
+    // KGlobalSettings.notifyChange: a [ToolsArea] change (the theme-independent titlebar
+    // transparency settings) is a decoration settings update.
+    void onGlobalSettingsChange();
 
 Q_SIGNALS:
     void decorationSettingsUpdate(QByteArray uuid);
     void systemColorSchemeUpdate(QByteArray uuid);
     void systemIconsUpdate();
+
+private:
+    QString m_toolsAreaSnapshot;
 };
 
 extern DBusUpdateNotifier BREEZECOMMON_EXPORT g_dBusUpdateNotifier;

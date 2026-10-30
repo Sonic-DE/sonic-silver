@@ -202,7 +202,7 @@ QColor Decoration::titleBarColor(bool returnNonAnimatedColor) const
 
     QColor activeTitleBarColor = m_decorationColors->active()->titleBarBase;
     QColor inactiveTitlebarColor = m_decorationColors->inactive()->titleBarBase;
-    if (m_internalSettings->opaqueTitleBar() || (m_internalSettings->opaqueMaximizedTitleBars() && c->isMaximized())) {
+    if (m_toolsArea.opaqueWhenMaximized && c->isMaximized()) {
         activeTitleBarColor.setAlpha(255);
         inactiveTitlebarColor.setAlpha(255);
     }
@@ -659,6 +659,9 @@ void Decoration::reconfigureMain(const bool noUpdateShadow)
 
 void Decoration::updateDecorationColors(const QPalette &clientPalette, QByteArray uuid)
 {
+    // The theme-independent titlebar transparency for this window (KF6::ColorScheme).
+    m_toolsArea = KToolsArea::settings(KSharedConfig::openConfig(QStringLiteral("kdeglobals")), window()->windowClass());
+
     QPalette systemPalette = KColorScheme::createApplicationPalette(s_kdeGlobalConfig);
     bool clientSpecificPalette = false;
     if (clientPalette != systemPalette) { // Some applications can set a Window Colour Scheme, meaning the client palette and system palette differ
@@ -672,7 +675,7 @@ void Decoration::updateDecorationColors(const QPalette &clientPalette, QByteArra
     // Commented was how m_toolsAreaWillBeDrawn was determined in Breeze, simplified for Silver
     // m_toolsAreaWillBeDrawn = ( m_colorSchemeHasHeaderColor && ( settings()->borderSize() == KDecoration3::BorderSize::None || settings()->borderSize() ==
     // KDecoration3::BorderSize::NoSides ) );
-    m_toolsAreaWillBeDrawn = (m_colorSchemeHasHeaderColor || m_internalSettings->matchTitleBarToApplicationColor());
+    m_toolsAreaWillBeDrawn = (m_colorSchemeHasHeaderColor || m_toolsArea.matchApplicationColor);
 
     QColor activeApplicationBackground = palette.color(QPalette::ColorGroup::Active, QPalette::ColorRole::Window);
 
@@ -698,6 +701,7 @@ void Decoration::updateDecorationColors(const QPalette &clientPalette, QByteArra
             m_decorationColors = std::make_unique<DecorationColors>(true);
         }
     }
+    m_decorationColors->setToolsArea(m_toolsArea);
 
     bool generateColors = false;
 
@@ -725,7 +729,7 @@ void Decoration::updateDecorationColors(const QPalette &clientPalette, QByteArra
         QColor activeTitleBarText = c->color(ColorGroup::Active, ColorRole::Foreground);
         QColor inactiveTitleBarText = c->color(ColorGroup::Inactive, ColorRole::Foreground);
 
-        if (m_internalSettings->matchTitleBarToApplicationColor() && !m_colorSchemeHasHeaderColor) {
+        if (m_toolsArea.matchApplicationColor && !m_colorSchemeHasHeaderColor) {
             if (activeApplicationBackground.isValid()) {
                 activeTitleBarBase = activeApplicationBackground;
             }
@@ -2078,7 +2082,7 @@ void Decoration::updateBlur()
     if (isOpaqueTitleBar()) { // opaque titlebar colours
         setBlurRegion(QRegion());
     } else { // transparent titlebar colours
-        if (m_internalSettings->blurTransparentTitleBars()) { // enable blur
+        if (m_toolsArea.blurBehind) { // enable blur
             calculateWindowShape(); // refreshes m_windowPath
             setBlurRegion(QRegion(m_windowPath.toFillPolygon().toPolygon()));
         } else
@@ -2088,15 +2092,7 @@ void Decoration::updateBlur()
 
 bool Decoration::isOpaqueTitleBar()
 {
-    QColor activeTitleBarColor = m_decorationColors->active()->titleBarBase;
-    QColor inactiveTitlebarColor = m_decorationColors->inactive()->titleBarBase;
-
-    if (m_internalSettings->opaqueTitleBar()) {
-        activeTitleBarColor.setAlpha(255);
-        inactiveTitlebarColor.setAlpha(255);
-    }
-
-    return ((activeTitleBarColor.alpha() == 255) && (inactiveTitlebarColor.alpha() == 255));
+    return m_decorationColors->active()->titleBarBase.alpha() == 255 && m_decorationColors->inactive()->titleBarBase.alpha() == 255;
 }
 
 qreal Decoration::titleBarSeparatorHeight(qreal scale) const

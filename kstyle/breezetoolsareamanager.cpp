@@ -190,10 +190,6 @@ void ToolsAreaManager::configUpdated()
         }
     }
 
-    // With the shared titlebar settings on, main windows get an alpha channel even while
-    // the header is opaque, so it can turn translucent later without recreating windows.
-    translucent = translucent || _helper->toolsArea().enabled;
-
     if (translucent != _translucent) {
         if (translucent)
             becomeTransparent();

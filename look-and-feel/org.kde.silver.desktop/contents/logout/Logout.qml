@@ -99,11 +99,9 @@ Item {
     Rectangle {
         id: backgroundRect
         anchors.fill: parent
-        // Intentionally hardcoded because any other color looks terrible here.
-        // Any bug reports about illegible text or icons should be considered
-        // a color scheme error and sent back to the user or their distro.
-        color: "black"
-        opacity: 0.85
+        // Same Complementary colour set as the text, so it stays legible with light themes.
+        color: Kirigami.Theme.backgroundColor
+        opacity: 0.5
     }
     MouseArea {
         anchors.fill: parent

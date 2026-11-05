@@ -5,6 +5,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QTextStream>
+#include <cstdio>
 
 namespace Breeze
 {
@@ -50,6 +51,12 @@ void setDebugOutput(const QString &rawTargetFilePath_)
             currentTargetFilePath = QDir::homePath() + rawTargetFilePath;
             if (!QFileInfo::exists(currentTargetFilePath)) {
                 QDir().mkpath(QFileInfo(currentTargetFilePath).path());
+            }
+
+            // Same limit and name as Sonic Logging's rotation.
+            constexpr qint64 rotationSizeBytes = 2097152;
+            if (QFileInfo(currentTargetFilePath).size() > rotationSizeBytes) {
+                std::rename(QFile::encodeName(currentTargetFilePath).constData(), QFile::encodeName(currentTargetFilePath + QStringLiteral(".last")).constData());
             }
 
             QFile file(currentTargetFilePath);

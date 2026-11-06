@@ -8,10 +8,6 @@
 
 #include "breezehelper.h"
 
-#if SILVER_STYLE_DEBUG_MODE
-#include "setqdebug_logging.h"
-#endif
-
 #include "breeze.h"
 #include "breezedecorationsettingsprovider.h"
 #include "breezepropertynames.h"
@@ -41,6 +37,15 @@
 #include <QStyleOption>
 #include <QWindow>
 
+#include <Sonic/Logging/Logging>
+
+SONIC_LOGGING_COMPONENT("org.sonicde.silver.style")
+
+#if SILVER_STYLE_DEBUG_MODE
+// Loaded into any Qt program; a program with its own handler keeps it
+SONIC_LOGGING_AUTO_INSTALL()
+#endif
+
 namespace Breeze
 {
 
@@ -58,9 +63,6 @@ Helper::Helper(KSharedConfig::Ptr config)
     , _kwinConfig(KSharedConfig::openConfig(QStringLiteral("kwinrc")))
     , _decorationConfig(DecorationSettingsProvider::self()->internalSettings())
 {
-#if SILVER_STYLE_DEBUG_MODE
-    setDebugOutput(SILVER_QDEBUG_OUTPUT_PATH_RELATIVE_HOME);
-#endif
 }
 
 //____________________________________________________________________

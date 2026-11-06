@@ -30,7 +30,6 @@ endif()
 
 include(CMakePackageConfigHelpers)
 include(ECMInstallIcons)
-include(ECMQtDeclareLoggingCategory)
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(KDEClangFormat)
 include(KDEGitCommitHooks)
@@ -83,6 +82,7 @@ function(build_Qt6)
         I18n
         IconThemes
         WindowSystem)
+    find_package(SonicLogging ${KF6_MIN_VERSION} REQUIRED)
 
     find_package(Qt6 ${QT_MIN_VERSION} OPTIONAL_COMPONENTS Quick)
     if(${Qt6Quick_FOUND})

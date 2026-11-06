@@ -61,17 +61,6 @@ kconfig_add_kcfg_files(breeze_PART_SRCS breezestyleconfigdata.kcfgc)
 
 add_library(silver${QT_MAJOR_VERSION} MODULE ${breeze_PART_SRCS})
 
-ecm_qt_declare_logging_category(silver${QT_MAJOR_VERSION}
-    HEADER
-        breeze_logging.h
-    IDENTIFIER
-        SILVER
-    CATEGORY_NAME
-        silver${QT_MAJOR_VERSION}
-    DEFAULT_SEVERITY
-        Warning
-)
-
 target_link_libraries(silver${QT_MAJOR_VERSION}
     Qt${QT_MAJOR_VERSION}::Core
     Qt${QT_MAJOR_VERSION}::Gui
@@ -100,7 +89,7 @@ target_link_libraries(silver${QT_MAJOR_VERSION}
     KF${QT_MAJOR_VERSION}::WindowSystem
 )
 
-target_link_libraries(silver6 KF6::ColorScheme)
+target_link_libraries(silver6 KF6::ColorScheme Sonic::Logging)
 if (SILVER_HAVE_QTQUICK)
     target_link_libraries(silver6 KF6::KirigamiPlatform)
 endif()

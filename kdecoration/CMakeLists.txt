@@ -33,6 +33,7 @@ target_link_libraries(silverdecoration
         KF6::IconThemes
         KF6::WindowSystem
         KDecoration3::KDecoration
+        Sonic::Logging
 )
 
 install(TARGETS silverdecoration DESTINATION ${KDE_INSTALL_PLUGINDIR}/${KDECORATION_PLUGIN_DIR})

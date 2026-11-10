@@ -5,6 +5,7 @@
         "Name": "Silver"
     },
     "X-KDE-ConfigModule": "kcm_silverdecoration",
+    "X-SonicDE-ToolsArea": true,
     "org.kde.kdecoration3": {
         "recommendedBorderSize": "Normal"
     }

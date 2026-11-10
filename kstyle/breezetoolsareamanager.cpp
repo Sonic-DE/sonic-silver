@@ -78,6 +78,7 @@ void ToolsAreaManager::doTranslucency(QMainWindow *win, bool on)
             return;
 
         win->setProperty("_silver_was_translucent", win->testAttribute(Qt::WA_TranslucentBackground));
+        win->setProperty("_silver_was_no_system_background", win->testAttribute(Qt::WA_NoSystemBackground));
         win->setAttribute(Qt::WA_TranslucentBackground, true);
         // Qt creates a window's native window before polishing it (QWidgetPrivate::setVisible),
         // so on its first show it exists without an alpha channel and the translucent tools
@@ -92,7 +93,10 @@ void ToolsAreaManager::doTranslucency(QMainWindow *win, bool on)
             return;
 
         win->setAttribute(Qt::WA_TranslucentBackground, wasTranslucent.toBool()); // set the translucency back to its initial value if altered here
+        // Setting WA_TranslucentBackground also set WA_NoSystemBackground; clearing it doesn't.
+        win->setAttribute(Qt::WA_NoSystemBackground, win->property("_silver_was_no_system_background").toBool());
         win->setProperty("_silver_was_translucent", QVariant());
+        win->setProperty("_silver_was_no_system_background", QVariant());
     }
 }
 
@@ -324,6 +328,8 @@ void ToolsAreaManager::unregisterWidget(QWidget *widget)
     auto ptr = QPointer<QWidget>(widget);
 
     if (QPointer<const QMainWindow> window = qobject_cast<QMainWindow *>(ptr)) {
+        // Another style takes over: it doesn't paint a translucent tools area.
+        doTranslucency(const_cast<QMainWindow*>(window.data()), false);
         removeWindow(window);
         return;
     } else if (QPointer<QToolBar> toolbar = qobject_cast<QToolBar *>(ptr)) {

@@ -2,6 +2,11 @@
 
 Silver is SonicDE's own visual theme and its default look, covering app styles, window borders, colour schemes, desktop themes, mouse cursors and the startup splash screen.
 
+## Unreleased
+
+- Switching from Silver to another app style no longer leaves the toolbar and menu bar area of open apps fully see-through until they are restarted.
+- Behind the scenes: the Silver window decoration now declares that it supports see-through titlebars, so they are turned back on when you return to Silver.
+
 ## 6.8.2 (2026-11-10)
 
 - The see-through title bar and toolbar settings (opacity, blur, opaque when maximized, matching the app colour) are now shared desktop-wide settings that other themes can use too, and modern apps follow them as well. They moved from Silver's settings to System Settings → Window Decorations → Configure Titlebar…, together with the per-application transparency exceptions; Silver's own exceptions keep their other settings. Your existing Silver settings carry over automatically. Applying a Silver preset sets these shared titlebar settings.

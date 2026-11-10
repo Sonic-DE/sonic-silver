@@ -129,4 +129,11 @@ if(BUILD_TESTING)
         set_tests_properties(silver-nonx11-${platform} PROPERTIES
             ENVIRONMENT "QT_QPA_PLATFORM=${platform};QT_STYLE_OVERRIDE=Fusion;QT_QUICK_BACKEND=software")
     endforeach()
+
+    add_executable(silver_styleswitchtest silver_styleswitchtest.cpp)
+    target_link_libraries(silver_styleswitchtest PRIVATE Qt6::Widgets Qt6::Test)
+    target_compile_definitions(silver_styleswitchtest PRIVATE SILVER_PLUGIN_FILE="$<TARGET_FILE:silver6>")
+    add_dependencies(silver_styleswitchtest silver6)
+    add_test(NAME silver-styleswitch COMMAND silver_styleswitchtest)
+    set_tests_properties(silver-styleswitch PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software")
 endif()

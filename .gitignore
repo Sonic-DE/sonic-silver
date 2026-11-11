@@ -11,3 +11,4 @@ CMakeLists.txt.user*
 .ccls-cache
 cursors/Silver_Dark/build*
 cursors/Silver_Light/build*
+.claude/

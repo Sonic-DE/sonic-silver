@@ -13,6 +13,7 @@
 #include "breezeboxshadowrenderer.h"
 #include "breezebutton.h"
 #include "breezesettingsprovider.h"
+#include "breezetitlebarmenuitem.h"
 #include "dbusupdatenotifier.h"
 #include "geometrytools.h"
 
@@ -20,6 +21,7 @@
 #include <KDecoration3/DecorationButtonGroup>
 #include <KDecoration3/DecorationShadow>
 #include <KDecoration3/ScaleHelpers>
+#include <KDecoration3/TitleBarMenu>
 
 #include <KColorUtils>
 #include <KConfigGroup>
@@ -30,11 +32,15 @@
 #include <QDBusMessage>
 #include <QDBusPendingCallWatcher>
 #include <QDBusPendingReply>
+#include <QGuiApplication>
 #include <QHoverEvent>
+#include <QMouseEvent>
 #include <QPainter>
 #include <QProcess>
+#include <QStyleHints>
 #include <QTextStream>
 #include <QTimer>
+#include <QWheelEvent>
 
 #include <cmath>
 #include <mutex>
@@ -393,6 +399,9 @@ void Decoration::init()
     connect(s.get(), &KDecoration3::DecorationSettings::decorationButtonsLeftChanged, this, &Decoration::updateButtonsGeometryDelayed);
     connect(s.get(), &KDecoration3::DecorationSettings::decorationButtonsRightChanged, this, &Decoration::updateButtonsGeometryDelayed);
     connect(s.get(), &KDecoration3::DecorationSettings::onAllDesktopsAvailableChanged, this, &Decoration::updateButtonsGeometryDelayed);
+    // the KCM preview changes these without emitting reconfigured()
+    connect(s.get(), &KDecoration3::DecorationSettings::applicationMenuStyleChanged, this, &Decoration::updateButtonsGeometryDelayed);
+    connect(s.get(), &KDecoration3::DecorationSettings::applicationMenuSearchEnabledChanged, this, &Decoration::updateButtonsGeometryDelayed);
 
     // full reconfiguration
     connect(s.get(), &KDecoration3::DecorationSettings::reconfigured, this, &Decoration::reconfigure);
@@ -644,6 +653,10 @@ void Decoration::reconfigureMain(const bool noUpdateShadow)
         m_animation->setDuration(0);
         m_shadowAnimation->setDuration(0);
         m_overrideOutlineFromButtonAnimation->setDuration(0);
+    }
+    if (m_titleBarMenu) {
+        m_titleBarMenu->setAnimationsEnabled(m_internalSettings->animationsEnabled());
+        m_titleBarMenu->setAnimationDuration(m_animation->duration());
     }
 
     // borders
@@ -947,7 +960,38 @@ void Decoration::createButtons()
 {
     m_leftButtons = new KDecoration3::DecorationButtonGroup(KDecoration3::DecorationButtonGroup::Position::Left, this, &Button::create);
     m_rightButtons = new KDecoration3::DecorationButtonGroup(KDecoration3::DecorationButtonGroup::Position::Right, this, &Button::create);
+
+    m_titleBarMenu = new KDecoration3::TitleBarMenu(this, std::make_unique<TitleBarMenuFactory>());
+    m_titleBarMenu->setAnimationsEnabled(m_internalSettings->animationsEnabled());
+    m_titleBarMenu->setAnimationDuration(m_animation->duration());
+    connect(m_titleBarMenu, &KDecoration3::TitleBarMenu::visibleItemsWidthChanged, this, &Decoration::updateButtonsGeometryDelayed);
+    connect(m_titleBarMenu, &KDecoration3::TitleBarMenu::itemsChanged, this, &Decoration::updateButtonsGeometryDelayed);
+    connect(m_titleBarMenu, &KDecoration3::TitleBarMenu::opacityChanged, this, qOverload<>(&Decoration::update));
+    // After the groups' own connections, so the buttons have been recreated.
+    connect(settings().get(), &KDecoration3::DecorationSettings::decorationButtonsLeftChanged, this, &Decoration::updateTitleBarMenuAnchor);
+    connect(settings().get(), &KDecoration3::DecorationSettings::decorationButtonsRightChanged, this, &Decoration::updateTitleBarMenuAnchor);
+    updateTitleBarMenuAnchor();
+
     updateButtonsGeometry();
+}
+
+//________________________________________________________________
+void Decoration::updateTitleBarMenuAnchor()
+{
+    KDecoration3::DecorationButton* anchor = nullptr;
+    for (const auto group : {m_leftButtons, m_rightButtons}) {
+        const auto buttons = group->buttons();
+        for (KDecoration3::DecorationButton* button : buttons) {
+            if (button->type() == KDecoration3::DecorationButtonType::ApplicationMenu) {
+                anchor = button;
+                break;
+            }
+        }
+        if (anchor) {
+            break;
+        }
+    }
+    m_titleBarMenu->setAnchor(anchor);
 }
 
 //________________________________________________________________
@@ -1047,6 +1091,9 @@ void Decoration::updateButtonsGeometry()
         bWidthRight = m_smallButtonPaddedSize;
     }
 
+    // The disabled anchor of the titlebar menu still counts as a visible button.
+    Button* menuAnchor = m_titleBarMenu ? qobject_cast<Button*>(m_titleBarMenu->anchor()) : nullptr;
+
     int leftmostLeftVisibleIndex = -1;
     int rightmostLeftVisibleIndex = -1;
     int numLeftButtons = m_leftButtons->buttons().count();
@@ -1103,7 +1150,7 @@ void Decoration::updateButtonsGeometry()
         ;
         button->setVisibleBeforeSpacer(false);
         // determine leftmost left visible and rightmostLeftVisible
-        if (button->isVisible() && (button->isEnabled() || button->type() == KDecoration3::DecorationButtonType::Spacer)) {
+        if (button->isVisible() && (button->isEnabled() || button == menuAnchor || button->type() == KDecoration3::DecorationButtonType::Spacer)) {
             button->setLeftButtonVisible(true);
 
             if (leftmostLeftVisibleIndex == -1) {
@@ -1138,7 +1185,7 @@ void Decoration::updateButtonsGeometry()
 
         for (int i = numLeftButtons - 2; i >= 0; i--) {
             Button *button = static_cast<Button *>(m_leftButtons->buttons()[i]);
-            if (button->isVisible() && (button->isEnabled() || button->type() == KDecoration3::DecorationButtonType::Spacer)) {
+            if (button->isVisible() && (button->isEnabled() || button == menuAnchor || button->type() == KDecoration3::DecorationButtonType::Spacer)) {
                 if (menuPresentAfter) {
                     button->setVisibleBeforeMenu(true);
                     menuPresentAfter = false;
@@ -1215,7 +1262,7 @@ void Decoration::updateButtonsGeometry()
         ;
         button->setVisibleBeforeSpacer(false);
         // determine leftmost right visible and rightmostRightVisible
-        if (button->isVisible() && (button->isEnabled() || button->type() == KDecoration3::DecorationButtonType::Spacer)) {
+        if (button->isVisible() && (button->isEnabled() || button == menuAnchor || button->type() == KDecoration3::DecorationButtonType::Spacer)) {
             button->setRightButtonVisible(true);
 
             if (leftmostRightVisibleIndex == -1) {
@@ -1250,7 +1297,7 @@ void Decoration::updateButtonsGeometry()
 
         for (int i = numRightButtons - 2; i >= 0; i--) {
             Button *button = static_cast<Button *>(m_rightButtons->buttons()[i]);
-            if (button->isVisible() && (button->isEnabled() || button->type() == KDecoration3::DecorationButtonType::Spacer)) {
+            if (button->isVisible() && (button->isEnabled() || button == menuAnchor || button->type() == KDecoration3::DecorationButtonType::Spacer)) {
                 if (menuPresentAfter) {
                     button->setVisibleBeforeMenu(true);
                     menuPresentAfter = false;
@@ -1268,6 +1315,19 @@ void Decoration::updateButtonsGeometry()
                 }
             }
         }
+    }
+
+    // titlebar menu, first pass: its icon buttons look like the anchor, which starts at zero width
+    const bool menuAnchored = menuAnchor && menuAnchor->isVisible();
+    QSizeF menuIconButtonSize;
+    if (menuAnchored) {
+        for (KDecoration3::DecorationButton* button : m_titleBarMenu->buttons()) {
+            if (auto menuButton = qobject_cast<Button*>(button)) {
+                menuButton->copyLayoutFrom(menuAnchor);
+            }
+        }
+        menuIconButtonSize = menuAnchor->geometry().size();
+        menuAnchor->setGeometry(QRectF(QPointF(0, 0), QSizeF(0, menuIconButtonSize.height())));
     }
 
     // left buttons
@@ -1304,27 +1364,51 @@ void Decoration::updateButtonsGeometry()
     }
 
     // right buttons
+    const qreal rightVPadding = (m_buttonBackgroundType == ButtonBackgroundType::FullHeight || isTopEdge()) ? 0 : buttonTopMargin;
+    // the right group's position depends on its width
+    auto positionRightButtons = [this, rightVPadding, scaledTitleBarRightMargin]() {
+        if (isRightEdge()) {
+            m_rightButtons->setPos(QPointF(size().width() - m_rightButtons->geometry().width(), rightVPadding));
+        } else {
+            m_rightButtons->setPos(
+                QPointF(size().width() - m_rightButtons->geometry().width() - scaledTitleBarRightMargin - nextState()->borders().right(), rightVPadding));
+        }
+    };
     if (!m_rightButtons->buttons().isEmpty() && rightmostRightVisibleIndex != -1) {
         // spacing
         m_rightButtons->setSpacing(buttonSpacingRight);
 
         // padding
-        qreal vPadding;
-        if (m_buttonBackgroundType == ButtonBackgroundType::FullHeight)
-            vPadding = 0;
-        else
-            vPadding = isTopEdge() ? 0 : buttonTopMargin;
         const qreal hPadding = scaledTitleBarRightMargin;
 
         auto lastButton = static_cast<Button *>(m_rightButtons->buttons()[rightmostRightVisibleIndex]);
         if (isRightEdge()) {
             lastButton->setGeometry(QRectF(QPoint(0, 0), QSizeF(lastButton->geometry().width() + hPadding, lastButton->geometry().height())));
-
-            m_rightButtons->setPos(QPointF(size().width() - m_rightButtons->geometry().width(), vPadding));
-
-        } else {
-            m_rightButtons->setPos(QPointF(size().width() - m_rightButtons->geometry().width() - hPadding - nextState()->borders().right(), vPadding));
         }
+        positionRightButtons();
+    }
+
+    // titlebar menu, second pass: the room between the groups, minus a minimum caption width
+    if (menuAnchored) {
+        const qreal anchorPadding = menuAnchor->geometry().width(); // edge padding the placement added
+        const bool inLeftGroup = m_leftButtons->buttons().contains(menuAnchor);
+        const bool paddingOnLeft = anchorPadding > 0 && inLeftGroup;
+
+        const qreal leftEdge = leftmostLeftVisibleIndex == -1 ? nextState()->borders().left() : m_leftButtons->geometry().right();
+        const qreal rightEdge = rightmostRightVisibleIndex == -1 ? size().width() - nextState()->borders().right() : m_rightButtons->geometry().left();
+        const qreal minimumCaptionWidth = KDecoration3::snapToPixelGrid(2 * m_internalSettings->titleSidePadding() * m_x11Scale + m_gridUnit * 6, scale);
+        const qreal freeWidth = qMax(0.0, rightEdge - leftEdge - minimumCaptionWidth);
+
+        const QRectF anchorRect = menuAnchor->geometry();
+        const QRectF availableRect = hideTitleBar() ? QRectF() : QRectF(anchorRect.x(), anchorRect.y(), freeWidth, anchorRect.height());
+        m_titleBarMenu->updateItemsGeometry(availableRect, menuIconButtonSize);
+
+        menuAnchor->setGeometry(QRectF(QPointF(0, 0), QSizeF(m_titleBarMenu->visibleItemsWidth() + anchorPadding, anchorRect.height())));
+        if (!inLeftGroup) {
+            positionRightButtons();
+        }
+        const QRectF finalAnchorRect = menuAnchor->geometry();
+        m_titleBarMenu->setPos(QPointF(finalAnchorRect.x() + (paddingOnLeft ? anchorPadding : 0), finalAnchorRect.y()));
     }
 
     update();
@@ -1531,6 +1615,11 @@ void Decoration::paintTitleBar(QPainter *painter, const QRectF &repaintRegion)
     painter->setPen(fontColor);
     const auto [maxCaptionRectangle, alignment] = captionRect(false);
     const QString caption = painter->fontMetrics().elidedText(c->caption(), Qt::ElideMiddle, maxCaptionRectangle.width());
+    // Shown on hover: the caption fades out while the titlebar menu fades in.
+    const qreal captionOpacity = painter->opacity();
+    if (m_titleBarMenu && settings()->applicationMenuStyle() == KDecoration3::ApplicationMenuStyle::ShownOnHover) {
+        painter->setOpacity(captionOpacity * (1 - m_titleBarMenu->opacity()));
+    }
     QRectF captionBoundingRect;
     painter->drawText(maxCaptionRectangle, alignment | Qt::TextSingleLine, caption, &captionBoundingRect);
 
@@ -1550,10 +1639,15 @@ void Decoration::paintTitleBar(QPainter *painter, const QRectF &repaintRegion)
         painter->drawLine(underline);
     }
 
+    painter->setOpacity(captionOpacity);
+
     // draw all buttons
     painter->setPen(fontColor);
     m_leftButtons->paint(painter, repaintRegion);
     m_rightButtons->paint(painter, repaintRegion);
+    if (m_titleBarMenu) {
+        m_titleBarMenu->paint(painter, repaintRegion);
+    }
 }
 
 // outputs the icon size + padding to make a small button, the actual icon size, and the background size to make a small button
@@ -1683,8 +1777,28 @@ QPair<QRectF, Qt::Alignment> Decoration::captionRect(bool nextState) const
 
         qreal padding = KDecoration3::snapToPixelGrid(m_internalSettings->titleSidePadding() * m_x11Scale, scale);
 
-        const qreal leftOffset = m_leftButtons->buttons().isEmpty() ? padding : m_leftButtons->geometry().x() + m_leftButtons->geometry().width() + padding;
-        const qreal rightOffset = m_rightButtons->buttons().isEmpty() ? padding : size().width() - m_rightButtons->geometry().x() + padding;
+        qreal leftOffset = m_leftButtons->buttons().isEmpty() ? padding : m_leftButtons->geometry().x() + m_leftButtons->geometry().width() + padding;
+        qreal rightOffset = m_rightButtons->buttons().isEmpty() ? padding : size().width() - m_rightButtons->geometry().x() + padding;
+
+        // Shown on hover: the caption may use the menu's room when nothing sits between them.
+        if (m_titleBarMenu && m_titleBarMenu->anchor() && m_titleBarMenu->anchor()->isVisible()
+            && settings()->applicationMenuStyle() == KDecoration3::ApplicationMenuStyle::ShownOnHover) {
+            auto innermostVisible = [](const QList<KDecoration3::DecorationButton*>& buttons, bool fromEnd) -> KDecoration3::DecorationButton* {
+                for (int i = 0; i < buttons.size(); ++i) {
+                    auto button = buttons.at(fromEnd ? buttons.size() - 1 - i : i);
+                    if (button->isVisible()) {
+                        return button;
+                    }
+                }
+                return nullptr;
+            };
+            const qreal menuWidth = m_titleBarMenu->visibleItemsWidth();
+            if (innermostVisible(m_leftButtons->buttons(), true) == m_titleBarMenu->anchor()) {
+                leftOffset -= menuWidth;
+            } else if (innermostVisible(m_rightButtons->buttons(), false) == m_titleBarMenu->anchor()) {
+                rightOffset -= menuWidth;
+            }
+        }
 
         const qreal yOffset = scaledTitleBarTopMargin;
         const QRectF maxRect(leftOffset, yOffset, size().width() - leftOffset - rightOffset, captionHeight);
@@ -2132,10 +2246,15 @@ void Decoration::setButtonUnisonHovered(bool value)
 // for unison hovering
 void Decoration::hoverMoveEvent(QHoverEvent *event)
 {
+    const bool onTitleBarMenu = m_titleBarMenu && m_titleBarMenu->geometry().contains(event->position());
     if (m_internalSettings->unisonHovering()) {
         const bool groupContains = m_leftButtons->geometry().contains(event->position()) || m_rightButtons->geometry().contains(event->position());
-        setButtonUnisonHovered(groupContains);
+        setButtonUnisonHovered(groupContains && !onTitleBarMenu);
     }
+    if (m_titleBarMenu) {
+        m_titleBarMenu->setHovered(titleBar().contains(event->position()));
+    }
+    checkTitleBarMenuDrag(event->position());
 
     KDecoration3::Decoration::hoverMoveEvent(event);
 }
@@ -2145,7 +2264,58 @@ void Decoration::hoverLeaveEvent(QHoverEvent *event)
     if (m_internalSettings->unisonHovering()) {
         setButtonUnisonHovered(false);
     }
+    if (m_titleBarMenu) {
+        m_titleBarMenu->setHovered(false);
+    }
     KDecoration3::Decoration::hoverLeaveEvent(event);
+}
+
+void Decoration::mousePressEvent(QMouseEvent* event)
+{
+    KDecoration3::Decoration::mousePressEvent(event);
+    if (!m_titleBarMenu || !m_titleBarMenu->geometry().contains(event->position())) {
+        return;
+    }
+    if (event->button() == Qt::LeftButton) {
+        // Let SonicWin start a window move; a drag then releases the pressed item.
+        m_titleBarMenuPressPos = event->position();
+        event->setAccepted(false);
+    } else if (event->button() == Qt::MiddleButton || event->button() == Qt::RightButton) {
+        // The base accepts these on a hovered button; leave them to the titlebar.
+        event->setAccepted(false);
+    }
+}
+
+void Decoration::mouseMoveEvent(QMouseEvent* event)
+{
+    checkTitleBarMenuDrag(event->position());
+    KDecoration3::Decoration::mouseMoveEvent(event);
+}
+
+void Decoration::mouseReleaseEvent(QMouseEvent* event)
+{
+    m_titleBarMenuPressPos.reset();
+    KDecoration3::Decoration::mouseReleaseEvent(event);
+}
+
+void Decoration::wheelEvent(QWheelEvent* event)
+{
+    // Unaccepted, so SonicWin's titlebar wheel action applies over the menu.
+    if (m_titleBarMenu && m_titleBarMenu->geometry().contains(event->position())) {
+        return;
+    }
+    KDecoration3::Decoration::wheelEvent(event);
+}
+
+void Decoration::checkTitleBarMenuDrag(const QPointF& pos)
+{
+    if (!m_titleBarMenuPressPos) {
+        return;
+    }
+    if ((pos - *m_titleBarMenuPressPos).manhattanLength() >= QGuiApplication::styleHints()->startDragDistance()) {
+        m_titleBarMenuPressPos.reset();
+        m_titleBarMenu->releaseAllItems();
+    }
 }
 
 } // namespace

@@ -177,11 +177,33 @@ void RenderDecorationButtonIcon::renderIcon(DecorationButtonType type, bool chec
         renderContextHelpIcon();
         break;
 
+    case DecorationButtonType::Custom:
+        renderSearchIcon();
+        break;
+
     default:
         break;
     }
 
     m_painter->restore();
+}
+
+void RenderDecorationButtonIcon::renderSearchIcon()
+{
+    QPainterPath path;
+    path.addEllipse(QPointF(8, 8), 4.5, 4.5);
+    path.moveTo(11.2, 11.2);
+    path.lineTo(15, 15);
+
+    if (m_strokeToFilledPath) {
+        QPainterPathStroker stroker(m_painter->pen());
+        path = stroker.createStroke(path);
+        m_painter->setBrush(m_painter->pen().color());
+        m_painter->setPen(Qt::NoPen);
+    } else {
+        m_painter->setBrush(Qt::NoBrush);
+    }
+    m_painter->drawPath(path);
 }
 
 bool RenderDecorationButtonIcon::roundedPenWidthIsOdd(const QPen &pen, qreal &outputRoundedPenWidth, const qreal boldingFactor)

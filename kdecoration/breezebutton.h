@@ -35,6 +35,17 @@ public:
     //* button creation
     static Button *create(KDecoration3::DecorationButtonType type, KDecoration3::Decoration *decoration, QObject *parent);
 
+    //* what a button of the titlebar menu (KDecoration3::TitleBarMenu) shows
+    enum class TitleBarMenuIcon {
+        None,
+        Overflow, // looks like the Application menu button
+        Search,
+    };
+    //* a Custom button for the titlebar menu, drawn with the Application menu button's colours
+    static Button* createTitleBarMenuButton(TitleBarMenuIcon icon, Decoration* decoration, QObject* parent);
+    //* takes the sizes, offsets and neighbour flags updateButtonsGeometry() gave @p other
+    void copyLayoutFrom(const Button* other);
+
     //* render
     void paint(QPainter *painter, const QRectF &repaintRegion) override;
 
@@ -193,6 +204,11 @@ private:
     //* draw button icon
     void drawIcon(QPainter *) const;
 
+    //* the type whose colours and icon this button uses
+    DecorationButtonType visualType() const;
+    //* the type passed to the icon renderers
+    DecorationButtonType iconType() const;
+
     //*@name colors
     //@{
     QColor backgroundColor(const bool getNonAnimatedColor = false) const;
@@ -283,6 +299,7 @@ private:
     QString m_systemIconName;
     QString m_systemIconCheckedName;
     bool m_isGtkCsdButton;
+    TitleBarMenuIcon m_titleBarMenuIcon = TitleBarMenuIcon::None;
     qreal m_devicePixelRatio = 1.0;
     bool m_boldButtonIcons;
     qreal m_standardScaledCosmeticPenWidth = 1.0;

@@ -29,11 +29,13 @@
 #include <KToolsArea>
 
 #include <memory>
+#include <optional>
 
 namespace KDecoration3
 {
 class DecorationButton;
 class DecorationButtonGroup;
+class TitleBarMenu;
 }
 
 namespace Breeze
@@ -65,6 +67,12 @@ public:
     qreal animationsDuration() const
     {
         return m_animation->duration();
+    }
+
+    //* the window's application menu in the titlebar, anchored to the ApplicationMenu button
+    KDecoration3::TitleBarMenu* titleBarMenu() const
+    {
+        return m_titleBarMenu;
     }
 
     //* caption height
@@ -224,8 +232,17 @@ private Q_SLOTS:
 protected:
     void hoverMoveEvent(QHoverEvent *event) override; // override decoration hover events for Unison hovering
     void hoverLeaveEvent(QHoverEvent *event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
+    void wheelEvent(QWheelEvent* event) override;
 
 private:
+    //* anchors the titlebar menu to the ApplicationMenu button of either group
+    void updateTitleBarMenuAnchor();
+    //* a press on the titlebar menu that turns into a window move releases its buttons
+    void checkTitleBarMenuDrag(const QPointF& pos);
+
     //* return the rect in which caption will be drawn
     QPair<QRectF, Qt::Alignment> captionRect(bool nextState) const;
 
@@ -273,6 +290,8 @@ private:
     KToolsArea::Settings m_toolsArea;
     KDecoration3::DecorationButtonGroup *m_leftButtons = nullptr;
     KDecoration3::DecorationButtonGroup *m_rightButtons = nullptr;
+    KDecoration3::TitleBarMenu* m_titleBarMenu = nullptr;
+    std::optional<QPointF> m_titleBarMenuPressPos;
 
     //* Whether the paint() method is active
     bool m_painting = false;

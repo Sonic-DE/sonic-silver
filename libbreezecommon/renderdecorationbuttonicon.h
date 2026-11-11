@@ -116,6 +116,11 @@ protected:
     virtual void renderKeepInFrontIcon() = 0;
     virtual void renderApplicationMenuIcon() = 0;
     virtual void renderContextHelpIcon() = 0;
+    /**
+     * @brief The titlebar menu's search button, drawn for DecorationButtonType::Custom.
+     * The default is a magnifier on the 18x18 reference grid.
+     */
+    virtual void renderSearchIcon();
 
     /**
      *@brief Multiplies the pen width by the bolding factor, and rounds it. Also returns whether the integer-rounded bold pen with is an even or odd number of

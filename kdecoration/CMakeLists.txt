@@ -9,6 +9,7 @@ set(breezedecoration_SRCS
     breezebutton.cpp
     breezedecoration.cpp
     breezesettingsprovider.cpp
+    breezetitlebarmenuitem.cpp
 )
 
 ### build library
@@ -33,6 +34,7 @@ target_link_libraries(silverdecoration
         KF6::IconThemes
         KF6::WindowSystem
         KDecoration3::KDecoration
+        KDecoration3::TitleBarMenu
         Sonic::Logging
 )
 

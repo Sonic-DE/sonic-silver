@@ -101,6 +101,11 @@ void SystemIconTheme::systemIconNames(DecorationButtonType type, QString &system
         systemIconCheckedName = systemIconName;
         break;
 
+    case DecorationButtonType::Custom: // the titlebar menu's search button
+        systemIconName = isSystemIconNameAvailable(QStringLiteral("edit-find-symbolic"), QStringLiteral("edit-find"));
+        systemIconCheckedName = systemIconName;
+        break;
+
     default:
         break;
     }

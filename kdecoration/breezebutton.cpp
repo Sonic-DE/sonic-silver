@@ -18,6 +18,7 @@
 #include <KDecoration3/DecoratedWindow>
 #include <KDecoration3/DecorationButtonGroup>
 #include <KDecoration3/ScaleHelpers>
+#include <KDecoration3/TitleBarMenu>
 #include <KIconLoader>
 #include <KWindowSystem>
 
@@ -146,6 +147,54 @@ Button *Button::create(KDecoration3::DecorationButtonType type, KDecoration3::De
 }
 
 //__________________________________________________________________
+Button* Button::createTitleBarMenuButton(TitleBarMenuIcon icon, Decoration* decoration, QObject* parent)
+{
+    Button* b = new Button(KDecoration3::DecorationButtonType::Custom, decoration, parent);
+    b->m_titleBarMenuIcon = icon;
+    b->reconfigure(); // picks the system icon names for the new icon
+    return b;
+}
+
+//__________________________________________________________________
+void Button::copyLayoutFrom(const Button* other)
+{
+    m_leftButtonVisible = other->m_leftButtonVisible;
+    m_rightButtonVisible = other->m_rightButtonVisible;
+    m_leftmostLeftVisible = other->m_leftmostLeftVisible;
+    m_rightmostLeftVisible = other->m_rightmostLeftVisible;
+    m_leftmostRightVisible = other->m_leftmostRightVisible;
+    m_rightmostRightVisible = other->m_rightmostRightVisible;
+    m_visibleAfterMenu = other->m_visibleAfterMenu;
+    m_visibleBeforeMenu = other->m_visibleBeforeMenu;
+    m_visibleAfterSpacer = other->m_visibleAfterSpacer;
+    m_visibleBeforeSpacer = other->m_visibleBeforeSpacer;
+    m_iconOffset = other->m_iconOffset;
+    m_fullHeightVisibleBackgroundOffset = other->m_fullHeightVisibleBackgroundOffset;
+    m_backgroundVisibleSize = other->m_backgroundVisibleSize;
+    m_smallButtonPaddedSize = other->m_smallButtonPaddedSize;
+    m_iconSize = other->m_iconSize;
+    update();
+}
+
+//__________________________________________________________________
+DecorationButtonType Button::visualType() const
+{
+    if (m_titleBarMenuIcon != TitleBarMenuIcon::None) {
+        return DecorationButtonType::ApplicationMenu;
+    }
+    return static_cast<DecorationButtonType>(type());
+}
+
+//__________________________________________________________________
+DecorationButtonType Button::iconType() const
+{
+    if (m_titleBarMenuIcon == TitleBarMenuIcon::Search) {
+        return DecorationButtonType::Custom;
+    }
+    return visualType();
+}
+
+//__________________________________________________________________
 void Button::paint(QPainter *painter, const QRectF &repaintRegion)
 {
     if (!geometry().intersects(repaintRegion)) {
@@ -156,8 +205,12 @@ void Button::paint(QPainter *painter, const QRectF &repaintRegion)
     }
     auto c = m_d->window();
 
-    m_buttonPalette =
-        m_d->decorationColors()->buttonPalette(static_cast<DecorationButtonType>(type())); // this is in paint() in-case caching type on m_buttonPalette changes
+    // The titlebar menu replaces its anchor; the button editor's stand-alone buttons still draw.
+    if (!isStandAlone() && m_d->titleBarMenu() && m_d->titleBarMenu()->anchor() == this) {
+        return;
+    }
+
+    m_buttonPalette = m_d->decorationColors()->buttonPalette(visualType()); // this is in paint() in-case caching type on m_buttonPalette changes
     if (!m_buttonPalette) { // this is the case when a spacer button
         return;
     }
@@ -312,7 +365,7 @@ void Button::drawIcon(QPainter *painter) const
         */
         painter->scale(scaleFactor, scaleFactor);
 
-        iconRenderer->renderIcon(static_cast<DecorationButtonType>(type()), isChecked());
+        iconRenderer->renderIcon(iconType(), isChecked());
     }
 }
 
@@ -641,7 +694,7 @@ void Button::reconfigure()
 
     // set m_systemIconName and m_systemIconCheckedName if a system icon theme is set
     if (m_d->internalSettings()->buttonIconStyle() == InternalSettings::EnumButtonIconStyle::StyleSystemIconTheme) {
-        SystemIconTheme::systemIconNames(static_cast<DecorationButtonType>(type()), m_systemIconName, m_systemIconCheckedName);
+        SystemIconTheme::systemIconNames(iconType(), m_systemIconName, m_systemIconCheckedName);
     }
 }
 
@@ -665,8 +718,7 @@ void Button::updateWindowOutlineWithButtonColor(bool on)
 
     QColor color = QColor();
     if (on) {
-        m_buttonPalette =
-            m_d->decorationColors()->buttonPalette(static_cast<DecorationButtonType>(type())); // this is here in-case caching type on m_buttonPalette changes
+        m_buttonPalette = m_d->decorationColors()->buttonPalette(visualType()); // this is here in-case caching type on m_buttonPalette changes
         if (!m_buttonPalette) {
             return;
         }

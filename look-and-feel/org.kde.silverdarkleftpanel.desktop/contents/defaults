@@ -20,6 +20,9 @@ LayoutName=thumbnail_grid
 library=org.kde.silver
 theme=Silver
 
+[silver/silverrc][Windeco]
+ButtonIconStyle=StyleFluent
+
 [plasmarc][Theme]
 name=silver-dark
 

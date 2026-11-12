@@ -4,6 +4,9 @@ Silver is SonicDE's own visual theme and its default look, covering app styles, 
 
 ## Unreleased
 
+- New global themes Silver Light - Apple Pie and Silver Dark - Apple Pie: a see-through top bar with the global menu, system tray and clock, a centered dock at the bottom, titlebar buttons on the left in the Ark style, and see-through menus and titlebars.
+- The Silver Light and Silver Dark Bottom Panel and Left Panel themes now show the application's menus in the titlebar, next to the window menu, and draw the titlebar buttons with Fluent-style icons. The On All Desktops button is no longer in the titlebar.
+
 - Switching from Silver to another app style no longer leaves the toolbar and menu bar area of open apps fully see-through until they are restarted.
 - Behind the scenes: the Silver window decoration now declares that it supports see-through titlebars, so they are turned back on when you return to Silver.
 - The Silver window decoration can show an application's menus right in the titlebar, at the place of the Application menu button, in Silver's own colours. Choose how in System Settings → Window Decorations → Configure Titlebar…. If you already have the Application menu button, a search button now sits next to it; it finds any menu item by name, and you can turn it off there.

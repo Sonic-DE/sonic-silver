@@ -1,0 +1,20 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "joseph.w.crowell@gmail.com",
+                "Name": "Joseph Crowell"
+            }
+        ],
+        "Category": "",
+        "Description": "Dark theme with a top bar for the global menu and a centered dock at the bottom",
+        "Description[fr]": "Thème sombre avec une barre supérieure pour le menu global et un dock centré en bas",
+        "Id": "org.kde.silverdarkapplepie.desktop",
+        "License": "LGPL 2.1",
+        "Name": "Silver Dark - Apple Pie",
+        "Name[fr]": "Silver sombre - Tarte aux pommes",
+        "Website": "https://github.com/Sonic-DE/silver-theme"
+    },
+    "X-Plasma-APIVersion": "2"
+}

@@ -1,0 +1,4 @@
+[kwinrc][org.kde.kdecoration2]
+ButtonsOnLeft=MN
+ButtonsOnRight=HIAX
+ApplicationMenuStyle=AlwaysShown

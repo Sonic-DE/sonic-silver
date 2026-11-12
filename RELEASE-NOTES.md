@@ -8,6 +8,7 @@ Silver is SonicDE's own visual theme and its default look, covering app styles, 
 - Behind the scenes: the Silver window decoration now declares that it supports see-through titlebars, so they are turned back on when you return to Silver.
 - The Silver window decoration can show an application's menus right in the titlebar, at the place of the Application menu button, in Silver's own colours. Choose how in System Settings → Window Decorations → Configure Titlebar…. If you already have the Application menu button, a search button now sits next to it; it finds any menu item by name, and you can turn it off there.
 - Menu transparency has moved from Silver's settings to the new Transparency page in System Settings → Colors & Themes, shared with the Breeze style. Your setting carries over.
+- The plain "Silver" global theme is gone; Silver Light - Bottom Panel is the default. If you used it, you're moved to Silver Light - Bottom Panel, or Silver Dark - Bottom Panel with a dark colour scheme, when you next log in. The Silver splash screen is now listed under Silver Light - Bottom Panel in System Settings → Splash Screen.
 
 ## 6.8.2 (2026-11-10)
 

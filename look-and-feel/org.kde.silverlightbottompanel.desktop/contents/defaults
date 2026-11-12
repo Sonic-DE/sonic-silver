@@ -11,10 +11,10 @@ Theme=silver
 widgetStyle=Silver
 
 [kwinrc][DesktopSwitcher]
-LayoutName=org.kde.silver.desktop
+LayoutName=thumbnail_grid
 
 [kwinrc][WindowSwitcher]
-LayoutName=org.kde.silver.desktop
+LayoutName=thumbnail_grid
 
 [kwinrc][org.kde.kdecoration2]
 library=org.kde.silver
@@ -24,4 +24,4 @@ theme=Silver
 name=silver-light
 
 [ksplashrc][KSplash]
-Theme=org.kde.silver.desktop
+Theme=org.kde.silverlightbottompanel.desktop

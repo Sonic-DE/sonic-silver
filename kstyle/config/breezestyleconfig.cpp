@@ -101,7 +101,6 @@ StyleConfig::StyleConfig(QWidget *parent)
     connect(_scrollBarMinSliderHeight, SIGNAL(valueChanged(int)), SLOT(updateChanged()));
 
     connect(_windowDragMode, SIGNAL(currentIndexChanged(int)), SLOT(updateChanged()));
-    connect(_menuOpacity, &QAbstractSlider::valueChanged, this, &StyleConfig::updateChanged);
 
     // only enable _autoHideArrows when an arrow button is selected to be displayed
     connect(_scrollBarAddLineButtons, SIGNAL(currentIndexChanged(int)), SLOT(setEnabledAutoHideArrows()));
@@ -137,7 +136,6 @@ void StyleConfig::save()
     StyleConfigData::setScrollBarSliderPadding(_scrollBarSliderPadding->value());
     StyleConfigData::setScrollBarMinSliderHeight(_scrollBarMinSliderHeight->value());
     StyleConfigData::setWindowDragMode(_windowDragMode->currentIndex());
-    StyleConfigData::setMenuOpacity(_menuOpacity->value());
 
     StyleConfigData::self()->save();
     _configuration->sync();
@@ -240,8 +238,6 @@ void StyleConfig::updateChanged()
         modified = true;
     else if (_windowDragMode->currentIndex() != StyleConfigData::windowDragMode())
         modified = true;
-    else if (_menuOpacity->value() != StyleConfigData::menuOpacity())
-        modified = true;
 
     Q_EMIT changed(modified);
 }
@@ -277,7 +273,6 @@ void StyleConfig::load()
     _scrollBarSliderPadding->setValue(StyleConfigData::scrollBarSliderPadding());
     _scrollBarMinSliderHeight->setValue(StyleConfigData::scrollBarMinSliderHeight());
     _windowDragMode->setCurrentIndex(StyleConfigData::windowDragMode());
-    _menuOpacity->setValue(StyleConfigData::menuOpacity());
 }
 
 void StyleConfig::kPageWidgetChanged(KPageWidgetItem *current, KPageWidgetItem *before)

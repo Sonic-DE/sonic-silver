@@ -530,6 +530,9 @@ private:
     std::unique_ptr<WidgetExplorer> _widgetExplorer;
     std::unique_ptr<BreezePrivate::TabBarData> _tabBarData;
 
+    //* menu opacity, 0–100, shared by every style (KToolsArea::menuOpacity())
+    int _menuOpacity = 100;
+
     //* icon hash
     using IconCache = QHash<StandardPixmap, QIcon>;
     IconCache _iconCache;

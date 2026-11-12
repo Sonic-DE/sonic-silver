@@ -27,6 +27,7 @@
 #include <KColorUtils>
 #include <KConfigWatcher>
 #include <KIconLoader>
+#include <KToolsArea>
 #include <KWindowEffects>
 #include <kguiaddons_version.h>
 
@@ -456,7 +457,7 @@ void Style::polish(QWidget *widget)
     } else if (qobject_cast<QMenu *>(widget)) {
         setTranslucentBackground(widget);
 
-        if (_helper->hasAlphaChannel(widget) && StyleConfigData::menuOpacity() < 100) {
+        if (_helper->hasAlphaChannel(widget) && _menuOpacity < 100) {
             _blurHelper->registerWidget(widget->window());
         }
 
@@ -2366,6 +2367,11 @@ void Style::loadConfiguration()
     _helper->loadConfig();
 
     _toolsAreaManager->configUpdated();
+
+    const KSharedConfigPtr kdeglobals = KSharedConfig::openConfig(QStringLiteral("kdeglobals"));
+    kdeglobals->reparseConfiguration();
+    KToolsArea::migrateMenuOpacity(kdeglobals);
+    _menuOpacity = KToolsArea::menuOpacity(kdeglobals);
 
     loadGlobalAnimationSettings();
 
@@ -4945,11 +4951,11 @@ bool Style::drawPanelMenuPrimitive(const QStyleOption *option, QPainter *painter
 
     painter->save();
 
-    if (StyleConfigData::menuOpacity() < 100) {
+    if (_menuOpacity < 100) {
         if (widget && widget->isWindow()) {
             painter->setCompositionMode(QPainter::CompositionMode_Source);
         }
-        background.setAlphaF(StyleConfigData::menuOpacity() / 100.0);
+        background.setAlphaF(_menuOpacity / 100.0);
         outline = _helper->alphaColor(palette.color(QPalette::WindowText), 0.25);
     }
 
@@ -6135,7 +6141,7 @@ bool Style::drawMenuItemControl(const QStyleOption *option, QPainter *painter, c
     if (menuItemOption->menuItemType == QStyleOptionMenuItem::Separator) {
         auto contentsRect = rect.adjusted(Metrics::MenuItem_MarginWidth, 0, -Metrics::MenuItem_MarginWidth, 0);
         QColor separatorColor;
-        if (StyleConfigData::menuOpacity() < 100) {
+        if (_menuOpacity < 100) {
             separatorColor = _helper->alphaColor(palette.color(QPalette::WindowText), Metrics::Bias_Default);
         } else {
             separatorColor = _helper->separatorColor(palette);
